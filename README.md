@@ -40,14 +40,15 @@ This scaffold sets up:
 - Cloud Run entrypoint scaffold
 - notification/state/execution service boundaries
 - richer Telegram notification rendering and local operator inspection helpers
-- minimal paper cycles for the currently supported direct-runtime and pure
-  feature-snapshot input modes
+- minimal paper cycles for the currently supported direct-runtime, pure
+  feature-snapshot, and hybrid snapshot+history input modes
 
 Current live state of the scaffold:
 
 - shared `paper_signal` adapters now exist upstream in `UsEquityStrategies`
 - `global_etf_rotation`, `tqqq_growth_income`, and `soxl_soxx_trend_income` can run end-to-end in this repo
-- `russell_1000_multi_factor_defensive` now runs through the shared `feature_snapshot` path
+- `russell_1000_multi_factor_defensive`, `tech_communication_pullback_enhancement`, and `mega_cap_leader_rotation_top50_balanced` now run through the shared `feature_snapshot` path
+- the hybrid `feature_snapshot + market_history + benchmark_history + portfolio_snapshot` route is wired for `dynamic_mega_leveraged_pullback`
 - the cycle supports `signal -> next-session pending plan -> simulated execution`
 - operator scripts can print current paper account state and preview the latest
   notification from local or GCS artifacts
@@ -212,8 +213,11 @@ Current tested minimal routes:
 2. `tqqq_growth_income`
 3. `soxl_soxx_trend_income`
 4. `russell_1000_multi_factor_defensive`
+5. `tech_communication_pullback_enhancement`
+6. `mega_cap_leader_rotation_top50_balanced`
+7. `dynamic_mega_leveraged_pullback` runtime path
 
-All four currently support:
+The currently wired paper cycles support:
 
 1. run after close
 2. queue a next-session paper rebalance
@@ -234,6 +238,6 @@ Scheduled summary delivery:
 
 Next changes should be:
 
-1. extend the paper cycle beyond the currently supported direct-runtime and pure `feature_snapshot` routes
-2. onboard the remaining shared snapshot and hybrid profiles
+1. onboard the remaining shared snapshot profiles that are still research-only in rollout
+2. decide whether `dynamic_mega_leveraged_pullback` should move from runtime-ready to rollout-enabled
 3. add higher-level monthly or incident-oriented operator review packs

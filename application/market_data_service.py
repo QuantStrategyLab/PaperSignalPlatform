@@ -67,14 +67,45 @@ def normalize_daily_bars(frame: pd.DataFrame) -> pd.DataFrame:
 
 def build_close_history_loader(
     bars_by_symbol: dict[str, pd.DataFrame],
+    *,
+    bar_provider: DailyBarProvider | None = None,
+    as_of_date: pd.Timestamp | None = None,
+    lookback_days: int | None = None,
 ) -> Callable[..., pd.Series]:
-    def _load_close_series(_capability, symbol: str):
-        frame = bars_by_symbol.get(str(symbol).strip().upper())
+    def _load_close_series(*args, **kwargs):
+        symbol = _extract_history_symbol(args, kwargs)
+        if not symbol:
+            return pd.Series(dtype=float)
+
+        frame = bars_by_symbol.get(symbol)
+        if (
+            (frame is None or frame.empty)
+            and bar_provider is not None
+            and as_of_date is not None
+            and lookback_days is not None
+        ):
+            fetched = bar_provider.fetch_daily_bars(
+                (symbol,),
+                as_of_date=pd.Timestamp(as_of_date).normalize(),
+                lookback_days=int(lookback_days),
+            )
+            frame = fetched.get(symbol)
+            if frame is not None:
+                bars_by_symbol[symbol] = frame.copy()
         if frame is None or frame.empty:
             return pd.Series(dtype=float)
         return frame["close"].dropna().astype(float)
 
     return _load_close_series
+
+
+def build_ohlcv_history_records(frame: pd.DataFrame) -> list[dict[str, float | str]]:
+    if frame is None or frame.empty:
+        return []
+    normalized = normalize_daily_bars(frame)
+    payload = normalized.reset_index().rename(columns={"index": "as_of"})
+    payload["as_of"] = pd.to_datetime(payload["as_of"]).dt.strftime("%Y-%m-%d")
+    return payload.to_dict("records")
 
 
 def build_semiconductor_indicator_inputs(
@@ -117,3 +148,13 @@ def resolve_effective_session(
     if not eligible:
         return None
     return eligible[0]
+
+
+def _extract_history_symbol(args, kwargs) -> str:
+    raw_symbol = kwargs.get("symbol")
+    if raw_symbol is None:
+        if len(args) >= 2:
+            raw_symbol = args[1]
+        elif len(args) >= 1:
+            raw_symbol = args[0]
+    return str(raw_symbol or "").strip().upper()

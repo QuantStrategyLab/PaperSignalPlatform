@@ -24,6 +24,8 @@ def test_supported_profiles_include_shared_runtime_enabled_profiles():
     assert "global_etf_rotation" in SUPPORTED_STRATEGY_PROFILES
     assert "tqqq_growth_income" in SUPPORTED_STRATEGY_PROFILES
     assert "soxl_soxx_trend_income" in SUPPORTED_STRATEGY_PROFILES
+    assert "tech_communication_pullback_enhancement" in SUPPORTED_STRATEGY_PROFILES
+    assert "mega_cap_leader_rotation_top50_balanced" in SUPPORTED_STRATEGY_PROFILES
 
 
 def test_profile_status_matrix_does_not_expose_selection_role_fields():

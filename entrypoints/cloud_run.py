@@ -33,6 +33,7 @@ def create_app() -> Flask:
             frozenset({"benchmark_history", "portfolio_snapshot"}),
             frozenset({"derived_indicators", "portfolio_snapshot"}),
             frozenset({"feature_snapshot"}),
+            frozenset({"feature_snapshot", "market_history", "benchmark_history", "portfolio_snapshot"}),
         }:
             return jsonify(
                 {

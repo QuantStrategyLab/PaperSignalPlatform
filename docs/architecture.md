@@ -58,6 +58,7 @@ The first concrete paths are now wired for:
 - `benchmark_history + portfolio_snapshot`
 - `derived_indicators + portfolio_snapshot`
 - `feature_snapshot`
+- `feature_snapshot + market_history + benchmark_history + portfolio_snapshot`
 
 Current shared profiles covered by those routes:
 
@@ -65,6 +66,9 @@ Current shared profiles covered by those routes:
 - `tqqq_growth_income`
 - `soxl_soxx_trend_income`
 - `russell_1000_multi_factor_defensive`
+- `tech_communication_pullback_enhancement`
+- `mega_cap_leader_rotation_top50_balanced`
+- `dynamic_mega_leveraged_pullback` runtime path
 
 1. load shared entrypoint/runtime adapter
 2. fetch daily bars from a brokerless market-data provider
@@ -74,8 +78,9 @@ Current shared profiles covered by those routes:
 6. mark the paper account to the close, persist state, write artifacts, publish
    a notification
 
-Other input modes stay on scaffold-only status until their normalized paper
-input builders are implemented.
+Other input modes still stay on scaffold-only status until their normalized
+paper input builders are implemented, but the main shared snapshot and hybrid
+routes are no longer blocked on platform runtime wiring.
 
 Durable runtime backends now supported:
 

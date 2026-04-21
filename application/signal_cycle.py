@@ -6,6 +6,7 @@ import pandas as pd
 
 from quant_platform_kit.common.models import PortfolioSnapshot, Position
 from quant_platform_kit.common.feature_snapshot_runtime import (
+    FeatureSnapshotContextRequest,
     FeatureSnapshotRuntimeSettings,
     evaluate_feature_snapshot_strategy,
 )
@@ -14,6 +15,7 @@ from quant_platform_kit.strategy_contracts import StrategyContext, build_executi
 from application.cycle_result import SignalCycleResult
 from application.market_data_service import (
     DailyBarProvider,
+    build_ohlcv_history_records,
     build_close_history_loader,
     build_semiconductor_indicator_inputs,
     latest_available_session,
@@ -46,12 +48,14 @@ def run_paper_signal_cycle(
         frozenset({"benchmark_history", "portfolio_snapshot"}),
         frozenset({"derived_indicators", "portfolio_snapshot"}),
         frozenset({"feature_snapshot"}),
+        frozenset({"feature_snapshot", "market_history", "benchmark_history", "portfolio_snapshot"}),
     }:
         raise NotImplementedError(
             "Minimal paper cycle currently supports market_history, "
             "benchmark_history+portfolio_snapshot, and "
             "derived_indicators+portfolio_snapshot, and "
-            "feature_snapshot profiles"
+            "feature_snapshot, and "
+            "feature_snapshot+market_history+benchmark_history+portfolio_snapshot profiles"
         )
 
     state = dependencies.state_store.load(settings.paper_account_group) or _bootstrap_state(settings)
@@ -91,6 +95,7 @@ def run_paper_signal_cycle(
         as_of_session=as_of_session,
         bars_by_symbol=bars_by_symbol,
         portfolio_snapshot=portfolio_snapshot,
+        market_data_provider=market_data_provider,
     )
     allocation_payload, decision_metadata = map_strategy_decision(
         decision,
@@ -206,15 +211,24 @@ def _evaluate_strategy_decision(
     as_of_session: pd.Timestamp,
     bars_by_symbol: dict[str, pd.DataFrame],
     portfolio_snapshot: PortfolioSnapshot,
+    market_data_provider: DailyBarProvider,
 ) -> tuple[Any, dict[str, Any]]:
     runtime_config = _build_runtime_config_inputs(
         runtime=runtime,
         settings=settings,
     )
-    if runtime.required_inputs == frozenset({"feature_snapshot"}):
+    if "feature_snapshot" in runtime.required_inputs:
         signal_delay = runtime.runtime_adapter.runtime_policy.signal_effective_after_trading_days
         if signal_delay is None:
             signal_delay = 1
+        available_inputs, build_available_inputs = _build_snapshot_runtime_inputs(
+            runtime=runtime,
+            settings=settings,
+            as_of_session=as_of_session,
+            bars_by_symbol=bars_by_symbol,
+            portfolio_snapshot=portfolio_snapshot,
+            market_data_provider=market_data_provider,
+        )
         snapshot_result = evaluate_feature_snapshot_strategy(
             entrypoint=runtime.entrypoint,
             runtime_adapter=runtime.runtime_adapter,
@@ -227,13 +241,16 @@ def _evaluate_strategy_decision(
             ),
             runtime_config=runtime_config,
             merged_runtime_config=runtime.merged_runtime_config or runtime.entrypoint.manifest.default_config,
+            available_inputs=available_inputs,
             as_of=as_of_session.to_pydatetime(),
             base_managed_symbols=tuple(
                 str(symbol)
                 for symbol in ((runtime.merged_runtime_config or {}).get("managed_symbols") or ())
             ),
             include_strategy_display_name=True,
-            set_run_as_of=True,
+            set_run_as_of=(runtime.required_inputs == frozenset({"feature_snapshot"})),
+            build_available_inputs=build_available_inputs,
+            context_builder=_build_paper_snapshot_context,
             catch_evaluation_errors=True,
         )
         metadata = {
@@ -365,9 +382,19 @@ def _build_market_data_inputs(
     *,
     runtime: LoadedStrategyRuntime,
     bars_by_symbol: dict[str, pd.DataFrame],
+    market_data_provider: DailyBarProvider | None = None,
+    as_of_session: pd.Timestamp | None = None,
+    history_lookback_days: int | None = None,
 ) -> dict[str, Any]:
     if runtime.required_inputs == frozenset({"market_history"}):
-        return {"market_history": build_close_history_loader(bars_by_symbol)}
+        return {
+            "market_history": build_close_history_loader(
+                bars_by_symbol,
+                bar_provider=market_data_provider,
+                as_of_date=as_of_session,
+                lookback_days=history_lookback_days,
+            )
+        }
     if runtime.required_inputs == frozenset({"benchmark_history", "portfolio_snapshot"}):
         config = dict(runtime.entrypoint.manifest.default_config)
         benchmark_symbol = str(config.get("benchmark_symbol") or "").strip().upper()
@@ -381,11 +408,7 @@ def _build_market_data_inputs(
                 f"Benchmark history missing for symbol {benchmark_symbol!r}"
             )
         return {
-            "benchmark_history": (
-                frame[["open", "high", "low", "close", "volume"]]
-                .reset_index(drop=True)
-                .to_dict("records")
-            )
+            "benchmark_history": build_ohlcv_history_records(frame)
         }
     if runtime.required_inputs == frozenset({"derived_indicators", "portfolio_snapshot"}):
         config = dict(runtime.entrypoint.manifest.default_config)
@@ -413,6 +436,70 @@ def _build_runtime_config_inputs(
     if runtime.required_inputs == frozenset({"market_history"}):
         config["pacing_sec"] = 0.0
     return config
+
+
+def _build_snapshot_runtime_inputs(
+    *,
+    runtime: LoadedStrategyRuntime,
+    settings: PlatformRuntimeSettings,
+    as_of_session: pd.Timestamp,
+    bars_by_symbol: dict[str, pd.DataFrame],
+    portfolio_snapshot: PortfolioSnapshot,
+    market_data_provider: DailyBarProvider,
+) -> tuple[dict[str, Any], Any]:
+    if runtime.required_inputs == frozenset({"feature_snapshot"}):
+        return {"portfolio_snapshot": portfolio_snapshot}, None
+    if runtime.required_inputs == frozenset(
+        {"feature_snapshot", "market_history", "benchmark_history", "portfolio_snapshot"}
+    ):
+        config = dict(runtime.merged_runtime_config or runtime.entrypoint.manifest.default_config)
+        benchmark_symbol = str(config.get("benchmark_symbol") or "").strip().upper()
+        if not benchmark_symbol:
+            raise ValueError(
+                f"Profile {runtime.profile!r} requires benchmark_symbol in default_config"
+            )
+        benchmark_frame = bars_by_symbol.get(benchmark_symbol)
+        if benchmark_frame is None or benchmark_frame.empty:
+            raise ValueError(
+                f"Benchmark history missing for symbol {benchmark_symbol!r}"
+            )
+        return (
+            {
+                "portfolio_snapshot": portfolio_snapshot,
+                "benchmark_history": build_ohlcv_history_records(benchmark_frame),
+                "market_history": build_close_history_loader(
+                    bars_by_symbol,
+                    bar_provider=market_data_provider,
+                    as_of_date=as_of_session,
+                    lookback_days=settings.history_lookback_days,
+                ),
+            },
+            lambda feature_snapshot: {"feature_snapshot": feature_snapshot},
+        )
+    raise NotImplementedError(
+        f"Unsupported feature snapshot required_inputs={sorted(runtime.required_inputs)}"
+    )
+
+
+def _build_paper_snapshot_context(request: FeatureSnapshotContextRequest) -> StrategyContext:
+    portfolio_snapshot = request.available_inputs.get("portfolio_snapshot")
+    current_holdings = ()
+    if portfolio_snapshot is not None and hasattr(portfolio_snapshot, "positions"):
+        current_holdings = tuple(
+            getattr(position, "symbol", position)
+            for position in getattr(portfolio_snapshot, "positions", ())
+        )
+    return StrategyContext(
+        as_of=request.as_of,
+        market_data={
+            name: request.available_inputs[name]
+            for name in request.entrypoint.manifest.required_inputs
+        },
+        portfolio=portfolio_snapshot,
+        state={"current_holdings": current_holdings},
+        runtime_config=dict(request.runtime_config),
+        capabilities={},
+    )
 
 
 def _queue_pending_plan(
