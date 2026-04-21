@@ -12,6 +12,7 @@ Suggested project boundary:
 - one Firestore database for latest paper-account state
 - one or more Cloud Run Jobs
 - one Cloud Scheduler job per runtime job
+- optional separate Cloud Run Jobs for daily or weekly operator summaries
 - no broker secrets
 - no broker gateway connectivity
 - no live trading IAM roles
@@ -74,6 +75,31 @@ prefix only, for example:
 ```bash
 ./scripts/deploy_cloud_scheduler_job.sh deploy/cloud_run_job.env
 ```
+
+## Operator summary jobs
+
+Use a separate env file for operator summaries:
+
+1. Copy [deploy/cloud_run_summary_job.env.example](/home/ubuntu/Projects/PaperSignalPlatform/deploy/cloud_run_summary_job.env.example) to a local env file and fill in the real values.
+2. Deploy or update the summary Cloud Run Job:
+
+```bash
+./scripts/deploy_operator_summary_job.sh deploy/cloud_run_summary_job.env
+```
+
+3. Deploy or update the summary Cloud Scheduler trigger:
+
+```bash
+./scripts/deploy_operator_summary_scheduler.sh deploy/cloud_run_summary_job.env
+```
+
+Recommended usage:
+
+- one daily summary job per operating region or account cluster
+- use `SUMMARY_GCS_PREFIX` to scope to one artifact subtree
+- use `SUMMARY_STRATEGY_PROFILE` or `SUMMARY_PAPER_ACCOUNT_GROUP` only when a narrower summary is needed
+- if the production image does not start in the repo root, override `SUMMARY_SCRIPT_PATH` with the in-container absolute path
+- keep the summary job separate from the per-strategy paper signal jobs
 
 ## Notes
 

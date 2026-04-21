@@ -116,6 +116,7 @@ PaperSignalPlatform/
     gcp_deployment.md
   deploy/
     cloud_run_job.env.example
+    cloud_run_summary_job.env.example
   entrypoints/
     cloud_run.py
   notifications/
@@ -123,6 +124,8 @@ PaperSignalPlatform/
   scripts/
     deploy_cloud_run_job.sh
     deploy_cloud_scheduler_job.sh
+    deploy_operator_summary_job.sh
+    deploy_operator_summary_scheduler.sh
     print_operator_summary.py
     preview_cycle_notification.py
     print_paper_account_state.py
@@ -223,8 +226,14 @@ Operator tooling now available:
 2. `scripts/preview_cycle_notification.py` for the latest per-run Telegram body
 3. `scripts/print_operator_summary.py` for one daily or weekly cross-book summary
 
+Scheduled summary delivery:
+
+1. use [deploy/cloud_run_summary_job.env.example](/home/ubuntu/Projects/PaperSignalPlatform/deploy/cloud_run_summary_job.env.example) as the template
+2. deploy the Cloud Run Job with [scripts/deploy_operator_summary_job.sh](/home/ubuntu/Projects/PaperSignalPlatform/scripts/deploy_operator_summary_job.sh)
+3. attach the Scheduler trigger with [scripts/deploy_operator_summary_scheduler.sh](/home/ubuntu/Projects/PaperSignalPlatform/scripts/deploy_operator_summary_scheduler.sh)
+
 Next changes should be:
 
 1. extend the paper cycle beyond the currently supported direct-runtime and pure `feature_snapshot` routes
-2. add scheduled delivery wiring for the daily or weekly operator summaries
-3. onboard the remaining shared snapshot and hybrid profiles
+2. onboard the remaining shared snapshot and hybrid profiles
+3. add higher-level monthly or incident-oriented operator review packs
