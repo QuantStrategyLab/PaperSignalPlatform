@@ -34,6 +34,7 @@ def main() -> None:
     parser.add_argument("--as-of", default=date.today().isoformat())
     parser.add_argument("--start-date")
     parser.add_argument("--end-date")
+    parser.add_argument("--period-label")
     parser.add_argument("--max-books", type=int, default=10)
     parser.add_argument("--max-events", type=int, default=15)
     parser.add_argument("--lang", default=os.getenv("NOTIFY_LANG", "en"))
@@ -43,12 +44,13 @@ def main() -> None:
     parser.add_argument("--tg-chat-id", default=os.getenv("GLOBAL_TELEGRAM_CHAT_ID"))
     args = parser.parse_args()
 
-    start_date, end_date, period_label = _resolve_window(
+    start_date, end_date, default_period_label = _resolve_window(
         review_type=args.review_type,
         as_of=args.as_of,
         start_date=args.start_date,
         end_date=args.end_date,
     )
+    period_label = (args.period_label or "").strip() or default_period_label
 
     if args.backend == "local_json":
         loaded = list_local_reconciliation_records(

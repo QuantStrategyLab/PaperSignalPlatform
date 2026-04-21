@@ -119,8 +119,10 @@ PaperSignalPlatform/
   docs/
     architecture.md
     gcp_deployment.md
+    incident_playbook.md
   deploy/
     cloud_run_job.env.example
+    operator_incident_review.env.example
     cloud_run_review_pack_job.env.example
     cloud_run_summary_job.env.example
   entrypoints/
@@ -134,6 +136,7 @@ PaperSignalPlatform/
     deploy_operator_review_pack_scheduler.sh
     deploy_operator_summary_job.sh
     deploy_operator_summary_scheduler.sh
+    execute_operator_incident_review_pack.sh
     print_operator_review_pack.py
     print_operator_summary.py
     preview_cycle_notification.py
@@ -251,7 +254,13 @@ Scheduled review-pack delivery:
 2. deploy the Cloud Run Job with [scripts/deploy_operator_review_pack_job.sh](/home/ubuntu/Projects/PaperSignalPlatform/scripts/deploy_operator_review_pack_job.sh)
 3. attach the Scheduler trigger with [scripts/deploy_operator_review_pack_scheduler.sh](/home/ubuntu/Projects/PaperSignalPlatform/scripts/deploy_operator_review_pack_scheduler.sh)
 
+Incident playbook:
+
+1. use [docs/incident_playbook.md](/home/ubuntu/Projects/PaperSignalPlatform/docs/incident_playbook.md) for trigger rules, incident naming, window selection, and Telegram routing
+2. copy [deploy/operator_incident_review.env.example](/home/ubuntu/Projects/PaperSignalPlatform/deploy/operator_incident_review.env.example) for one ad hoc incident run
+3. execute the incident replay with [scripts/execute_operator_incident_review_pack.sh](/home/ubuntu/Projects/PaperSignalPlatform/scripts/execute_operator_incident_review_pack.sh)
+
 Next changes should be:
 
 1. onboard the remaining shared snapshot profiles that are still research-only in rollout
-2. standardize one incident playbook on top of the new review-pack jobs
+2. add one higher-signal incident trigger dashboard on top of the existing review-pack jobs

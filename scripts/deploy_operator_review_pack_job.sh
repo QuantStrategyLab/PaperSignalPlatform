@@ -93,6 +93,10 @@ elif [[ -n "${REVIEW_AS_OF:-}" ]]; then
   job_args+=("--as-of" "${REVIEW_AS_OF}")
 fi
 
+if [[ -n "${REVIEW_PERIOD_LABEL:-}" ]]; then
+  job_args+=("--period-label" "${REVIEW_PERIOD_LABEL}")
+fi
+
 if [[ "${review_send_telegram}" == "true" ]]; then
   job_args+=("--send-telegram")
 fi

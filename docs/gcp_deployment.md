@@ -128,6 +128,10 @@ Recommended usage:
 - if the production image does not start in the repo root, override `REVIEW_SCRIPT_PATH` with the in-container absolute path
 - keep the review-pack job separate from the per-strategy paper signal jobs and from the daily summary jobs
 
+For ad hoc incident execution, keep one deployed review-pack job per region and
+reuse it with [docs/incident_playbook.md](/home/ubuntu/Projects/PaperSignalPlatform/docs/incident_playbook.md) plus
+[scripts/execute_operator_incident_review_pack.sh](/home/ubuntu/Projects/PaperSignalPlatform/scripts/execute_operator_incident_review_pack.sh).
+
 ## Notes
 
 - `PaperSignalPlatform` stays brokerless even in production deployment.
