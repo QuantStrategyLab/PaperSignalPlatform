@@ -68,3 +68,32 @@ class LocalJsonPaperStateStore(PaperStateStore):
 
     def _path_for_group(self, paper_account_group: str) -> Path:
         return Path(self.root_dir) / f"{paper_account_group}.json"
+
+
+@dataclass(frozen=True)
+class FirestorePaperStateStore(PaperStateStore):
+    client: Any
+    collection_name: str
+
+    def load(self, paper_account_group: str) -> PaperAccountState | None:
+        document = self.client.collection(self.collection_name).document(paper_account_group).get()
+        if not getattr(document, "exists", False):
+            return None
+        payload = dict(document.to_dict() or {})
+        return PaperAccountState(
+            paper_account_group=str(payload["paper_account_group"]),
+            cash=float(payload["cash"]),
+            nav=float(payload["nav"]),
+            positions=dict(payload.get("positions") or {}),
+            metadata=dict(payload.get("metadata") or {}),
+        )
+
+    def save(self, state: PaperAccountState) -> None:
+        payload = {
+            "paper_account_group": state.paper_account_group,
+            "cash": float(state.cash),
+            "nav": float(state.nav),
+            "positions": dict(state.positions),
+            "metadata": dict(state.metadata),
+        }
+        self.client.collection(self.collection_name).document(state.paper_account_group).set(payload)

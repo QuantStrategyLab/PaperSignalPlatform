@@ -15,6 +15,7 @@
 - paper execution translation and fill-model ownership
 - request orchestration
 - final Telegram wording and audit artifacts
+- isolated paper-only GCP deployment conventions
 
 ## What does not belong here
 
@@ -73,3 +74,13 @@ Current shared profiles covered by those routes:
 
 Other input modes stay on scaffold-only status until their normalized paper
 input builders are implemented.
+
+Durable runtime backends now supported:
+
+- `Firestore` for latest paper-account state
+- `GCS` for reconciliation JSON artifacts
+- `local_json` remains available for local development and tests
+
+When deploying with Google Cloud, use a dedicated paper-only project instead of
+sharing the same project with live broker runtimes. This repo should never need
+broker IAM roles or broker secrets.

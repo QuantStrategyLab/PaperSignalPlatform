@@ -58,6 +58,20 @@ Current live state of the scaffold:
   then simulate rebalance/fills locally
 - output goes to Telegram + structured artifacts/state, never to a broker
 
+## Recommended GCP boundary
+
+If this runtime uses Google Cloud services, it should live in its own dedicated
+GCP project instead of sharing the same project with live trading runtimes.
+
+Recommended split:
+
+- one dedicated GCP project for `PaperSignalPlatform`
+- `Cloud Run`, `Cloud Scheduler`, `Firestore`, `GCS`, and Telegram secrets live there
+- no broker secrets, broker gateways, or live trading IAM roles in that project
+
+That keeps paper signal operations, budgets, logs, IAM, and alerts isolated
+from live trading infrastructure.
+
 ## Shared strategy compatibility
 
 `PaperSignalPlatform` follows the same cross-platform strategy contract as the
@@ -120,10 +134,12 @@ PaperSignalPlatform/
 | `GLOBAL_TELEGRAM_CHAT_ID` | No | Default Telegram chat id |
 | `NOTIFY_LANG` | No | Default `en` |
 | `GOOGLE_CLOUD_PROJECT` | No | Required only when using Secret Manager |
-| `PAPER_SIGNAL_STATE_STORE_BACKEND` | No | Default `local_json`; `memory` is intended for tests only |
-| `PAPER_SIGNAL_ARTIFACT_STORE_BACKEND` | No | Default `local_json` |
+| `PAPER_SIGNAL_STATE_STORE_BACKEND` | No | Default `local_json`; supported: `memory`, `local_json`, `firestore` |
+| `PAPER_SIGNAL_ARTIFACT_STORE_BACKEND` | No | Default `local_json`; supported: `local_json`, `gcs` |
 | `PAPER_SIGNAL_STATE_DIR` | No | Default repo-local `.paper_signal/state` |
 | `PAPER_SIGNAL_ARTIFACT_DIR` | No | Default repo-local `.paper_signal/artifacts` |
+| `PAPER_SIGNAL_FIRESTORE_COLLECTION` | No | Default `paper_signal_states` |
+| `PAPER_SIGNAL_GCS_BUCKET` | No | Required when artifact backend is `gcs` |
 | `PAPER_SIGNAL_MARKET_DATA_PROVIDER` | No | Default `yfinance` |
 | `PAPER_SIGNAL_HISTORY_LOOKBACK_DAYS` | No | Default `420` |
 
@@ -148,6 +164,8 @@ Each group declares paper-only runtime identity and simulation defaults:
 - optional `telegram_chat_id`
 
 There is intentionally no broker credential field.
+When using `PAPER_SIGNAL_ARTIFACT_STORE_BACKEND=gcs`, `artifact_bucket_prefix`
+is treated as the object prefix inside `PAPER_SIGNAL_GCS_BUCKET`.
 
 ## Deploy shape
 
@@ -158,6 +176,8 @@ Recommended deploy model:
 - Cloud Scheduler triggers the run
 
 The platform remains brokerless even when deployed next to live runtimes.
+When Google Cloud is used, prefer a separate paper-only GCP project rather than
+reusing the live trading one.
 
 ## Next step
 
@@ -167,7 +187,7 @@ Current tested minimal routes:
 2. `tqqq_growth_income`
 3. `soxl_soxx_trend_income`
 
-Both currently support:
+All three currently support:
 
 1. run after close
 2. queue a next-session paper rebalance
@@ -177,5 +197,5 @@ Both currently support:
 Next changes should be:
 
 1. extend the paper cycle beyond `market_history`, `benchmark_history + portfolio_snapshot`, and `derived_indicators + portfolio_snapshot`
-2. add durable state/artifact backends such as Firestore/GCS
+2. add deployment templates for isolated GCP projects
 3. add richer Telegram formatting and operator scripts

@@ -54,6 +54,8 @@ class PlatformRuntimeSettings:
     commission_bps: float
     fill_model: str
     artifact_bucket_prefix: str | None
+    gcs_bucket: str | None
+    firestore_collection: str
     state_store_backend: str
     artifact_store_backend: str
     state_dir: str
@@ -147,6 +149,11 @@ def load_platform_runtime_settings(
             paper_account_group=paper_account_group,
         ),
         artifact_bucket_prefix=group_config.artifact_bucket_prefix,
+        gcs_bucket=normalize_optional_string(os.getenv("PAPER_SIGNAL_GCS_BUCKET")),
+        firestore_collection=(
+            os.getenv("PAPER_SIGNAL_FIRESTORE_COLLECTION", "paper_signal_states").strip()
+            or "paper_signal_states"
+        ),
         state_store_backend=(os.getenv("PAPER_SIGNAL_STATE_STORE_BACKEND", "local_json").strip() or "local_json"),
         artifact_store_backend=(os.getenv("PAPER_SIGNAL_ARTIFACT_STORE_BACKEND", "local_json").strip() or "local_json"),
         state_dir=(
