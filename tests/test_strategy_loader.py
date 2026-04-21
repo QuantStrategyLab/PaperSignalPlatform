@@ -33,9 +33,19 @@ def test_supported_profiles_include_shared_runtime_enabled_profiles():
 
 def test_supported_profiles_include_paper_only_runtime_ready_override():
     assert "dynamic_mega_leveraged_pullback" in PAPER_SIGNAL_RUNTIME_READY_OVERRIDES
+    assert "mega_cap_leader_rotation_dynamic_top20" in PAPER_SIGNAL_RUNTIME_READY_OVERRIDES
+    assert "mega_cap_leader_rotation_aggressive" in PAPER_SIGNAL_RUNTIME_READY_OVERRIDES
     assert "dynamic_mega_leveraged_pullback" in SUPPORTED_STRATEGY_PROFILES
+    assert "mega_cap_leader_rotation_dynamic_top20" in SUPPORTED_STRATEGY_PROFILES
+    assert "mega_cap_leader_rotation_aggressive" in SUPPORTED_STRATEGY_PROFILES
     definition = load_strategy_definition("dynamic_mega_leveraged_pullback")
     assert definition.profile == "dynamic_mega_leveraged_pullback"
+    assert load_strategy_definition("mega_cap_leader_rotation_dynamic_top20").profile == (
+        "mega_cap_leader_rotation_dynamic_top20"
+    )
+    assert load_strategy_definition("mega_cap_leader_rotation_aggressive").profile == (
+        "mega_cap_leader_rotation_aggressive"
+    )
 
 
 def test_profile_status_matrix_does_not_expose_selection_role_fields():
@@ -52,3 +62,15 @@ def test_profile_status_matrix_marks_dynamic_mega_enabled_for_paper_signal_only(
     assert dynamic_row["eligible"] is True
     assert dynamic_row["enabled"] is True
     assert "dynamic_mega_leveraged_pullback" not in get_runtime_enabled_profiles()
+
+
+def test_profile_status_matrix_marks_mega_cap_archives_enabled_for_paper_signal_only():
+    rows = get_platform_profile_status_matrix()
+    for profile in (
+        "mega_cap_leader_rotation_dynamic_top20",
+        "mega_cap_leader_rotation_aggressive",
+    ):
+        row = next(row for row in rows if row["canonical_profile"] == profile)
+        assert row["eligible"] is True
+        assert row["enabled"] is True
+        assert profile not in get_runtime_enabled_profiles()

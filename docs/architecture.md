@@ -74,6 +74,8 @@ Current shared profiles covered by those routes:
 - `soxl_soxx_trend_income`
 - `russell_1000_multi_factor_defensive`
 - `tech_communication_pullback_enhancement`
+- `mega_cap_leader_rotation_dynamic_top20`
+- `mega_cap_leader_rotation_aggressive`
 - `mega_cap_leader_rotation_top50_balanced`
 - `dynamic_mega_leveraged_pullback`
 
@@ -89,9 +91,11 @@ Other input modes still stay on scaffold-only status until their normalized
 paper input builders are implemented, but the main shared snapshot and hybrid
 routes are no longer blocked on platform runtime wiring.
 
-`dynamic_mega_leveraged_pullback` is the first example of a paper-only rollout
-override: it remains `research_only` in `UsEquityStrategies`, but this runtime
-enables it locally because the brokerless paper cycle is now covered by tests.
+`dynamic_mega_leveraged_pullback`, `mega_cap_leader_rotation_dynamic_top20`,
+and `mega_cap_leader_rotation_aggressive` are the first paper-only rollout
+overrides: they remain `research_only` in `UsEquityStrategies`, but this
+runtime enables them locally because the brokerless paper cycle is now covered
+by tests.
 
 Durable runtime backends now supported:
 

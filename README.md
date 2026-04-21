@@ -47,9 +47,9 @@ Current live state of the scaffold:
 
 - shared `paper_signal` adapters now exist upstream in `UsEquityStrategies`
 - `global_etf_rotation`, `tqqq_growth_income`, and `soxl_soxx_trend_income` can run end-to-end in this repo
-- `russell_1000_multi_factor_defensive`, `tech_communication_pullback_enhancement`, and `mega_cap_leader_rotation_top50_balanced` now run through the shared `feature_snapshot` path
+- `russell_1000_multi_factor_defensive`, `tech_communication_pullback_enhancement`, `mega_cap_leader_rotation_top50_balanced`, `mega_cap_leader_rotation_dynamic_top20`, and `mega_cap_leader_rotation_aggressive` now run through the shared `feature_snapshot` path
 - the hybrid `feature_snapshot + market_history + benchmark_history + portfolio_snapshot` route is wired for `dynamic_mega_leveraged_pullback`
-- `dynamic_mega_leveraged_pullback` is rollout-enabled in `PaperSignalPlatform` after local validation, while remaining `research_only` in the shared catalog for live broker runtimes
+- `dynamic_mega_leveraged_pullback`, `mega_cap_leader_rotation_dynamic_top20`, and `mega_cap_leader_rotation_aggressive` are rollout-enabled in `PaperSignalPlatform` after local validation, while remaining `research_only` in the shared catalog for live broker runtimes
 - the cycle supports `signal -> next-session pending plan -> simulated execution`
 - operator scripts can print current paper account state and preview the latest
   notification from local or GCS artifacts
@@ -231,7 +231,9 @@ Current tested minimal routes:
 4. `russell_1000_multi_factor_defensive`
 5. `tech_communication_pullback_enhancement`
 6. `mega_cap_leader_rotation_top50_balanced`
-7. `dynamic_mega_leveraged_pullback`
+7. `mega_cap_leader_rotation_dynamic_top20`
+8. `mega_cap_leader_rotation_aggressive`
+9. `dynamic_mega_leveraged_pullback`
 
 The currently wired paper cycles support:
 
@@ -275,5 +277,5 @@ Incident playbook:
 
 Next changes should be:
 
-1. onboard the remaining shared snapshot profiles that are still research-only in rollout
-2. decide whether scheduled dashboard findings should auto-open a narrower incident review pack
+1. decide whether scheduled dashboard findings should auto-open a narrower incident review pack
+2. evaluate whether any additional research-only profiles beyond the current snapshot/hybrid set deserve paper-only rollout overrides

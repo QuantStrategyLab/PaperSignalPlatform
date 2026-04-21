@@ -471,94 +471,33 @@ def test_tech_feature_snapshot_cycle_executes_and_requeues_next_day_plan(tmp_pat
 
 
 def test_mega_cap_top50_feature_snapshot_cycle_executes_and_requeues_next_day_plan(tmp_path):
-    snapshot_path = tmp_path / "mega_cap_leader_rotation_top50_balanced_feature_snapshot_latest.csv"
-    snapshot_path.write_text(_build_mega_cap_feature_snapshot_csv(), encoding="utf-8")
-    _write_feature_snapshot_manifest(
-        snapshot_path=snapshot_path,
-        strategy_profile="mega_cap_leader_rotation_top50_balanced",
-        contract_version="mega_cap_leader_rotation_top50_balanced.feature_snapshot.v1",
-        snapshot_as_of="2026-03-31",
-        config_name="mega_cap_leader_rotation_top50_balanced",
-    )
-    settings = PlatformRuntimeSettings(
-        project_id=None,
+    _assert_mega_cap_feature_snapshot_cycle(
+        tmp_path=tmp_path,
         strategy_profile="mega_cap_leader_rotation_top50_balanced",
         strategy_display_name="Mega Cap Leader Rotation Top50 Balanced",
-        strategy_domain="us_equity",
-        strategy_target_mode="weight",
-        strategy_artifact_root=None,
-        strategy_artifact_dir=None,
-        feature_snapshot_path=str(snapshot_path),
-        feature_snapshot_manifest_path=None,
-        strategy_config_path=None,
-        strategy_config_source=None,
-        reconciliation_output_path=None,
         paper_account_group="sg_mega_notify",
         service_name="paper-signal-mega-sg",
-        account_alias="sg-paper-mega",
-        base_currency="USD",
-        market_calendar="XNYS",
-        starting_equity=100000.0,
-        slippage_bps=0.0,
-        commission_bps=0.0,
-        fill_model="next_open",
-        artifact_bucket_prefix=None,
-        gcs_bucket=None,
-        firestore_collection="paper_signal_states",
-        state_store_backend="memory",
-        artifact_store_backend="local_json",
-        state_dir="/tmp/paper-signal-state",
-        artifact_dir="/tmp/paper-signal-artifacts",
-        market_data_provider="fake",
-        history_lookback_days=420,
-        tg_token=None,
-        tg_chat_id=None,
-        notify_lang="en",
-    )
-    runtime = load_strategy_runtime(settings)
-    state_store = InMemoryPaperStateStore()
-    artifact_writer = RecordingArtifactWriter()
-    notification_port = RecordingNotificationPort()
-    dependencies = PaperSignalRuntimeDependencies(
-        state_store=state_store,
-        artifact_writer=artifact_writer,
-        notification_port=notification_port,
-    )
-    provider = FakeDailyBarProvider(_build_mega_cap_bars(end_date="2026-04-03"))
-
-    first = run_paper_signal_cycle(
-        settings=settings,
-        runtime=runtime,
-        dependencies=dependencies,
-        market_data_provider=provider,
-        as_of_date="2026-04-01",
     )
 
-    assert first.status == "ok"
-    assert first.summary["execution"]["status"] == "no_pending_plan"
-    assert first.summary["queue_status"] == "queued_pending_plan"
-    pending = state_store.load(settings.paper_account_group).metadata["pending_plan"]
-    assert pending["effective_date"] == "2026-04-02"
-    assert {"AAPL", "MSFT", "NVDA"}.issubset(set(pending["targets"]))
 
-    second = run_paper_signal_cycle(
-        settings=settings,
-        runtime=runtime,
-        dependencies=dependencies,
-        market_data_provider=provider,
-        as_of_date="2026-04-02",
+def test_mega_cap_dynamic_top20_feature_snapshot_cycle_executes_and_requeues_next_day_plan(tmp_path):
+    _assert_mega_cap_feature_snapshot_cycle(
+        tmp_path=tmp_path,
+        strategy_profile="mega_cap_leader_rotation_dynamic_top20",
+        strategy_display_name="Mega Cap Leader Rotation Dynamic Top20",
+        paper_account_group="sg_mega_top20_notify",
+        service_name="paper-signal-mega-top20-sg",
     )
 
-    assert second.status == "ok"
-    assert second.summary["execution"]["status"] == "executed_pending_plan"
-    assert second.summary["queue_status"] == "queued_pending_plan"
-    assert {"AAPL", "MSFT", "NVDA"}.issubset(
-        {row["symbol"] for row in second.summary["positions"]}
+
+def test_mega_cap_aggressive_feature_snapshot_cycle_executes_and_requeues_next_day_plan(tmp_path):
+    _assert_mega_cap_feature_snapshot_cycle(
+        tmp_path=tmp_path,
+        strategy_profile="mega_cap_leader_rotation_aggressive",
+        strategy_display_name="Mega Cap Leader Rotation Aggressive",
+        paper_account_group="sg_mega_aggressive_notify",
+        service_name="paper-signal-mega-aggressive-sg",
     )
-    latest_state = state_store.load(settings.paper_account_group)
-    assert latest_state.metadata["pending_plan"]["effective_date"] == "2026-04-06"
-    assert len(notification_port.messages) == 2
-    assert len(artifact_writer.records) == 2
 
 
 def test_dynamic_mega_hybrid_cycle_executes_and_requeues_next_day_plan(tmp_path):
@@ -1360,3 +1299,100 @@ def _sha256_file(path: Path) -> str:
 def _ues_config_path(relative_path: str) -> Path:
     return Path(__file__).resolve().parents[2] / "UsEquityStrategies" / relative_path
 
+
+def _assert_mega_cap_feature_snapshot_cycle(
+    *,
+    tmp_path: Path,
+    strategy_profile: str,
+    strategy_display_name: str,
+    paper_account_group: str,
+    service_name: str,
+) -> None:
+    snapshot_path = tmp_path / f"{strategy_profile}_feature_snapshot_latest.csv"
+    snapshot_path.write_text(_build_mega_cap_feature_snapshot_csv(), encoding="utf-8")
+    _write_feature_snapshot_manifest(
+        snapshot_path=snapshot_path,
+        strategy_profile=strategy_profile,
+        contract_version=f"{strategy_profile}.feature_snapshot.v1",
+        snapshot_as_of="2026-03-31",
+        config_name=strategy_profile,
+    )
+    settings = PlatformRuntimeSettings(
+        project_id=None,
+        strategy_profile=strategy_profile,
+        strategy_display_name=strategy_display_name,
+        strategy_domain="us_equity",
+        strategy_target_mode="weight",
+        strategy_artifact_root=None,
+        strategy_artifact_dir=None,
+        feature_snapshot_path=str(snapshot_path),
+        feature_snapshot_manifest_path=None,
+        strategy_config_path=None,
+        strategy_config_source=None,
+        reconciliation_output_path=None,
+        paper_account_group=paper_account_group,
+        service_name=service_name,
+        account_alias="sg-paper-mega",
+        base_currency="USD",
+        market_calendar="XNYS",
+        starting_equity=100000.0,
+        slippage_bps=0.0,
+        commission_bps=0.0,
+        fill_model="next_open",
+        artifact_bucket_prefix=None,
+        gcs_bucket=None,
+        firestore_collection="paper_signal_states",
+        state_store_backend="memory",
+        artifact_store_backend="local_json",
+        state_dir="/tmp/paper-signal-state",
+        artifact_dir="/tmp/paper-signal-artifacts",
+        market_data_provider="fake",
+        history_lookback_days=420,
+        tg_token=None,
+        tg_chat_id=None,
+        notify_lang="en",
+    )
+    runtime = load_strategy_runtime(settings)
+    state_store = InMemoryPaperStateStore()
+    artifact_writer = RecordingArtifactWriter()
+    notification_port = RecordingNotificationPort()
+    dependencies = PaperSignalRuntimeDependencies(
+        state_store=state_store,
+        artifact_writer=artifact_writer,
+        notification_port=notification_port,
+    )
+    provider = FakeDailyBarProvider(_build_mega_cap_bars(end_date="2026-04-03"))
+
+    first = run_paper_signal_cycle(
+        settings=settings,
+        runtime=runtime,
+        dependencies=dependencies,
+        market_data_provider=provider,
+        as_of_date="2026-04-01",
+    )
+
+    assert first.status == "ok"
+    assert first.summary["execution"]["status"] == "no_pending_plan"
+    assert first.summary["queue_status"] == "queued_pending_plan"
+    pending = state_store.load(settings.paper_account_group).metadata["pending_plan"]
+    assert pending["effective_date"] == "2026-04-02"
+    assert {"AAPL", "MSFT", "NVDA"}.issubset(set(pending["targets"]))
+
+    second = run_paper_signal_cycle(
+        settings=settings,
+        runtime=runtime,
+        dependencies=dependencies,
+        market_data_provider=provider,
+        as_of_date="2026-04-02",
+    )
+
+    assert second.status == "ok"
+    assert second.summary["execution"]["status"] == "executed_pending_plan"
+    assert second.summary["queue_status"] == "queued_pending_plan"
+    assert {"AAPL", "MSFT", "NVDA"}.issubset(
+        {row["symbol"] for row in second.summary["positions"]}
+    )
+    latest_state = state_store.load(settings.paper_account_group)
+    assert latest_state.metadata["pending_plan"]["effective_date"] == "2026-04-06"
+    assert len(notification_port.messages) == 2
+    assert len(artifact_writer.records) == 2
