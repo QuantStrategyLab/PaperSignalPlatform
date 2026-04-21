@@ -49,6 +49,7 @@ Current live state of the scaffold:
 - `global_etf_rotation`, `tqqq_growth_income`, and `soxl_soxx_trend_income` can run end-to-end in this repo
 - `russell_1000_multi_factor_defensive`, `tech_communication_pullback_enhancement`, and `mega_cap_leader_rotation_top50_balanced` now run through the shared `feature_snapshot` path
 - the hybrid `feature_snapshot + market_history + benchmark_history + portfolio_snapshot` route is wired for `dynamic_mega_leveraged_pullback`
+- `dynamic_mega_leveraged_pullback` is rollout-enabled in `PaperSignalPlatform` after local validation, while remaining `research_only` in the shared catalog for live broker runtimes
 - the cycle supports `signal -> next-session pending plan -> simulated execution`
 - operator scripts can print current paper account state and preview the latest
   notification from local or GCS artifacts
@@ -215,7 +216,7 @@ Current tested minimal routes:
 4. `russell_1000_multi_factor_defensive`
 5. `tech_communication_pullback_enhancement`
 6. `mega_cap_leader_rotation_top50_balanced`
-7. `dynamic_mega_leveraged_pullback` runtime path
+7. `dynamic_mega_leveraged_pullback`
 
 The currently wired paper cycles support:
 
@@ -239,5 +240,4 @@ Scheduled summary delivery:
 Next changes should be:
 
 1. onboard the remaining shared snapshot profiles that are still research-only in rollout
-2. decide whether `dynamic_mega_leveraged_pullback` should move from runtime-ready to rollout-enabled
-3. add higher-level monthly or incident-oriented operator review packs
+2. add higher-level monthly or incident-oriented operator review packs

@@ -38,6 +38,11 @@ When adding a new strategy for this platform:
 Do not patch around missing shared adapters by adding a local strategy
 implementation in this repository.
 
+Paper-only rollout overrides are allowed when a profile stays
+`research_only` in the shared catalog but has been validated locally for this
+brokerless runtime. That override must stay local to `PaperSignalPlatform`
+instead of changing live broker rollout policy upstream.
+
 ## Paper execution rule
 
 The future paper execution service should own:
@@ -68,7 +73,7 @@ Current shared profiles covered by those routes:
 - `russell_1000_multi_factor_defensive`
 - `tech_communication_pullback_enhancement`
 - `mega_cap_leader_rotation_top50_balanced`
-- `dynamic_mega_leveraged_pullback` runtime path
+- `dynamic_mega_leveraged_pullback`
 
 1. load shared entrypoint/runtime adapter
 2. fetch daily bars from a brokerless market-data provider
@@ -81,6 +86,10 @@ Current shared profiles covered by those routes:
 Other input modes still stay on scaffold-only status until their normalized
 paper input builders are implemented, but the main shared snapshot and hybrid
 routes are no longer blocked on platform runtime wiring.
+
+`dynamic_mega_leveraged_pullback` is the first example of a paper-only rollout
+override: it remains `research_only` in `UsEquityStrategies`, but this runtime
+enables it locally because the brokerless paper cycle is now covered by tests.
 
 Durable runtime backends now supported:
 

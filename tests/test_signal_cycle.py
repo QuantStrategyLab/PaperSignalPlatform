@@ -14,12 +14,7 @@ from application.runtime_dependencies import PaperSignalRuntimeDependencies
 from application.signal_cycle import run_paper_signal_cycle
 from application.state_store_service import InMemoryPaperStateStore
 from runtime_config_support import PlatformRuntimeSettings
-from strategy_registry import PAPER_SIGNAL_PLATFORM
-from strategy_runtime import LoadedStrategyRuntime, load_strategy_runtime
-
-from quant_platform_kit.common.strategies import load_strategy_entrypoint
-from us_equity_strategies import get_platform_runtime_adapter
-from us_equity_strategies.catalog import get_strategy_definition
+from strategy_runtime import load_strategy_runtime
 
 
 @dataclass(frozen=True)
@@ -611,7 +606,7 @@ def test_dynamic_mega_hybrid_cycle_executes_and_requeues_next_day_plan(tmp_path)
         tg_chat_id=None,
         notify_lang="en",
     )
-    runtime = _build_manual_runtime("dynamic_mega_leveraged_pullback", settings)
+    runtime = load_strategy_runtime(settings)
     state_store = InMemoryPaperStateStore()
     artifact_writer = RecordingArtifactWriter()
     notification_port = RecordingNotificationPort()
@@ -1365,20 +1360,3 @@ def _sha256_file(path: Path) -> str:
 def _ues_config_path(relative_path: str) -> Path:
     return Path(__file__).resolve().parents[2] / "UsEquityStrategies" / relative_path
 
-
-def _build_manual_runtime(profile: str, settings: PlatformRuntimeSettings) -> LoadedStrategyRuntime:
-    definition = get_strategy_definition(profile)
-    runtime_adapter = get_platform_runtime_adapter(profile, platform_id=PAPER_SIGNAL_PLATFORM)
-    entrypoint = load_strategy_entrypoint(
-        definition,
-        platform_id=PAPER_SIGNAL_PLATFORM,
-        available_inputs=runtime_adapter.available_inputs,
-        available_capabilities=runtime_adapter.available_capabilities,
-    )
-    return LoadedStrategyRuntime(
-        entrypoint=entrypoint,
-        runtime_settings=settings,
-        runtime_adapter=runtime_adapter,
-        runtime_config={},
-        merged_runtime_config=dict(entrypoint.manifest.default_config),
-    )
