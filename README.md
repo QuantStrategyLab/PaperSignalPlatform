@@ -55,6 +55,8 @@ Current live state of the scaffold:
   notification from local or GCS artifacts
 - operator scripts can also build one daily or weekly summary for stdout or
   Telegram delivery
+- operator scripts can build one monthly or incident-oriented review pack from
+  reconciliation artifacts for stdout or Telegram delivery
 - unsupported input modes still return scaffold-only status until their paper cycle
   wiring lands
 
@@ -105,6 +107,7 @@ PaperSignalPlatform/
     cycle_result.py
     notification_renderers.py
     notification_service.py
+    operator_review_pack.py
     operator_support.py
     operator_summary.py
     paper_execution_service.py
@@ -128,6 +131,7 @@ PaperSignalPlatform/
     deploy_cloud_scheduler_job.sh
     deploy_operator_summary_job.sh
     deploy_operator_summary_scheduler.sh
+    print_operator_review_pack.py
     print_operator_summary.py
     preview_cycle_notification.py
     print_paper_account_state.py
@@ -230,6 +234,7 @@ Operator tooling now available:
 1. `scripts/print_paper_account_state.py` for the latest persisted paper book
 2. `scripts/preview_cycle_notification.py` for the latest per-run Telegram body
 3. `scripts/print_operator_summary.py` for one daily or weekly cross-book summary
+4. `scripts/print_operator_review_pack.py` for one monthly or incident-oriented review pack
 
 Scheduled summary delivery:
 
@@ -240,4 +245,4 @@ Scheduled summary delivery:
 Next changes should be:
 
 1. onboard the remaining shared snapshot profiles that are still research-only in rollout
-2. add higher-level monthly or incident-oriented operator review packs
+2. add scheduled delivery for monthly or incident-oriented operator review packs

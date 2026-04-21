@@ -15,6 +15,7 @@
 - paper execution translation and fill-model ownership
 - request orchestration
 - final Telegram wording and audit artifacts
+- operator summaries and review packs derived from persisted artifacts
 - isolated paper-only GCP deployment conventions
 
 ## What does not belong here

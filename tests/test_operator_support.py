@@ -1,13 +1,36 @@
 from __future__ import annotations
 
 import json
+from dataclasses import dataclass, field
 
 from application.operator_support import (
     format_paper_account_state,
+    list_gcs_reconciliation_records,
     list_local_reconciliation_records,
+    load_latest_gcs_reconciliation_record,
     load_latest_local_reconciliation_record,
 )
 from application.state_store_service import PaperAccountState
+
+
+@dataclass
+class FakeListBlob:
+    name: str
+    payload: dict
+
+    def download_as_text(self) -> str:
+        return json.dumps(self.payload)
+
+
+@dataclass
+class FakeListStorageClient:
+    blobs: dict[str, list[FakeListBlob]] = field(default_factory=dict)
+
+    def list_blobs(self, bucket_name: str, prefix: str | None = None):
+        candidates = list(self.blobs.get(bucket_name, ()))
+        if not prefix:
+            return candidates
+        return [blob for blob in candidates if blob.name.startswith(prefix)]
 
 
 def test_format_paper_account_state_renders_zh_summary():
@@ -100,3 +123,68 @@ def test_list_local_reconciliation_records_filters_by_date_profile_and_group(tmp
     assert len(records) == 1
     assert records[0][0].name == "global_etf_rotation__sg_alpha.json"
     assert records[0][1]["payload"]["as_of"] == "2026-04-22"
+
+
+def test_list_gcs_reconciliation_records_filters_by_date_profile_and_group():
+    client = FakeListStorageClient(
+        blobs={
+            "paper-signal-artifacts": [
+                FakeListBlob(
+                    name="paper/2026-04-20/global_etf_rotation__sg_alpha.json",
+                    payload={"payload": {"as_of": "2026-04-20"}},
+                ),
+                FakeListBlob(
+                    name="paper/2026-04-22/global_etf_rotation__sg_alpha.json",
+                    payload={"payload": {"as_of": "2026-04-22"}},
+                ),
+                FakeListBlob(
+                    name="paper/2026-04-22/global_etf_rotation__sg_beta.json",
+                    payload={"payload": {"as_of": "2026-04-22"}},
+                ),
+            ]
+        }
+    )
+
+    records = list_gcs_reconciliation_records(
+        bucket_name="paper-signal-artifacts",
+        prefix="paper",
+        strategy_profile="global_etf_rotation",
+        paper_account_group="sg_alpha",
+        start_date="2026-04-21",
+        end_date="2026-04-22",
+        storage_client=client,
+    )
+
+    assert len(records) == 1
+    assert records[0][0] == "paper/2026-04-22/global_etf_rotation__sg_alpha.json"
+    assert records[0][1]["payload"]["as_of"] == "2026-04-22"
+
+
+def test_load_latest_gcs_reconciliation_record_returns_latest_match():
+    client = FakeListStorageClient(
+        blobs={
+            "paper-signal-artifacts": [
+                FakeListBlob(
+                    name="paper/2026-04-21/tqqq_growth_income__sg_alpha.json",
+                    payload={"payload": {"as_of": "2026-04-21"}},
+                ),
+                FakeListBlob(
+                    name="paper/2026-04-22/tqqq_growth_income__sg_alpha.json",
+                    payload={"payload": {"as_of": "2026-04-22"}},
+                ),
+            ]
+        }
+    )
+
+    result = load_latest_gcs_reconciliation_record(
+        bucket_name="paper-signal-artifacts",
+        prefix="paper",
+        strategy_profile="tqqq_growth_income",
+        paper_account_group="sg_alpha",
+        storage_client=client,
+    )
+
+    assert result is not None
+    source, payload = result
+    assert source == "paper/2026-04-22/tqqq_growth_income__sg_alpha.json"
+    assert payload["payload"]["as_of"] == "2026-04-22"

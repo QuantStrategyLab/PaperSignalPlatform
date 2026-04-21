@@ -63,6 +63,28 @@ def load_latest_local_reconciliation_record(
     return matches[-1]
 
 
+def load_latest_gcs_reconciliation_record(
+    *,
+    bucket_name: str,
+    prefix: str = "",
+    project_id: str | None = None,
+    strategy_profile: str | None = None,
+    paper_account_group: str | None = None,
+    storage_client: Any | None = None,
+) -> tuple[str, dict[str, Any]] | None:
+    matches = list_gcs_reconciliation_records(
+        bucket_name=bucket_name,
+        prefix=prefix,
+        project_id=project_id,
+        strategy_profile=strategy_profile,
+        paper_account_group=paper_account_group,
+        storage_client=storage_client,
+    )
+    if not matches:
+        return None
+    return matches[-1]
+
+
 def list_local_reconciliation_records(
     root_dir: str,
     *,
@@ -97,6 +119,54 @@ def list_local_reconciliation_records(
             item[0].name,
         ),
     )
+
+
+def list_gcs_reconciliation_records(
+    *,
+    bucket_name: str,
+    prefix: str = "",
+    project_id: str | None = None,
+    strategy_profile: str | None = None,
+    paper_account_group: str | None = None,
+    start_date: str | None = None,
+    end_date: str | None = None,
+    storage_client: Any | None = None,
+) -> list[tuple[str, dict[str, Any]]]:
+    if storage_client is None:
+        from google.cloud import storage
+
+        storage_client = storage.Client(project=project_id) if project_id else storage.Client()
+
+    matches: list[tuple[str, dict[str, Any]]] = []
+    normalized_prefix = prefix.strip("/") or None
+    for blob in storage_client.list_blobs(bucket_name, prefix=normalized_prefix):
+        if not getattr(blob, "name", "").endswith(".json"):
+            continue
+        blob_date, file_name = _extract_blob_date_and_file_name(str(blob.name))
+        if start_date and blob_date and blob_date < start_date:
+            continue
+        if end_date and blob_date and blob_date > end_date:
+            continue
+        if strategy_profile and not file_name.startswith(f"{strategy_profile}__"):
+            continue
+        if paper_account_group and not file_name.endswith(f"__{paper_account_group}.json"):
+            continue
+        matches.append((str(blob.name), json.loads(blob.download_as_text())))
+
+    return sorted(
+        matches,
+        key=lambda item: (
+            _extract_blob_date_and_file_name(item[0])[0],
+            Path(item[0]).name,
+        ),
+    )
+
+
+def _extract_blob_date_and_file_name(blob_name: str) -> tuple[str, str]:
+    path = Path(blob_name)
+    if len(path.parts) < 2:
+        return "", path.name
+    return path.parts[-2], path.name
 
 
 def _format_money(value: Any) -> str:
