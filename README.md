@@ -103,11 +103,16 @@ PaperSignalPlatform/
     paper_account_groups.example.json
   docs/
     architecture.md
+    gcp_deployment.md
+  deploy/
+    cloud_run_job.env.example
   entrypoints/
     cloud_run.py
   notifications/
     telegram.py
   scripts/
+    deploy_cloud_run_job.sh
+    deploy_cloud_scheduler_job.sh
     print_strategy_profile_status.py
   tests/
     test_cloud_run_entrypoint.py
@@ -174,6 +179,7 @@ Recommended deploy model:
 - Cloud Run Job or Cloud Run service
 - one deployment per `STRATEGY_PROFILE x PAPER_ACCOUNT_GROUP`
 - Cloud Scheduler triggers the run
+- use [docs/gcp_deployment.md](/home/ubuntu/Projects/PaperSignalPlatform/docs/gcp_deployment.md) and [deploy/cloud_run_job.env.example](/home/ubuntu/Projects/PaperSignalPlatform/deploy/cloud_run_job.env.example) as the starting point
 
 The platform remains brokerless even when deployed next to live runtimes.
 When Google Cloud is used, prefer a separate paper-only GCP project rather than
@@ -197,5 +203,5 @@ All three currently support:
 Next changes should be:
 
 1. extend the paper cycle beyond `market_history`, `benchmark_history + portfolio_snapshot`, and `derived_indicators + portfolio_snapshot`
-2. add deployment templates for isolated GCP projects
-3. add richer Telegram formatting and operator scripts
+2. add richer Telegram formatting and operator scripts
+3. onboard `feature_snapshot`-backed shared profiles
