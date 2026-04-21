@@ -39,6 +39,8 @@ Recommended split:
   - grant `roles/secretmanager.secretAccessor`
   - grant a Firestore role that includes document read/write, such as `roles/datastore.user`
   - grant bucket-scoped `roles/storage.objectAdmin` on the artifact bucket
+  - if scheduled incident auto-open is enabled, also grant `roles/run.invoker`
+    on the deployed review-pack Cloud Run Job that will be executed
 - scheduler service account
   - used by Cloud Scheduler to call the Cloud Run Jobs API
   - grant a role that includes `run.jobs.run`, typically `roles/run.invoker`
@@ -133,6 +135,33 @@ For ad hoc incident execution, keep one deployed review-pack job per region and
 reuse it with [docs/incident_playbook.md](/home/ubuntu/Projects/PaperSignalPlatform/docs/incident_playbook.md) plus
 [scripts/execute_operator_incident_review_pack.sh](/home/ubuntu/Projects/PaperSignalPlatform/scripts/execute_operator_incident_review_pack.sh).
 
+## Incident auto-open jobs
+
+Use a separate env file for optional scheduled auto-open from dashboard findings:
+
+1. Copy [deploy/cloud_run_incident_review_actions_job.env.example](/home/ubuntu/Projects/PaperSignalPlatform/deploy/cloud_run_incident_review_actions_job.env.example) to a local env file and fill in the real values.
+2. Deploy or update the incident-action Cloud Run Job:
+
+```bash
+./scripts/deploy_incident_review_actions_job.sh deploy/cloud_run_incident_review_actions_job.env
+```
+
+3. Deploy or update the incident-action Cloud Scheduler trigger:
+
+```bash
+./scripts/deploy_incident_review_actions_scheduler.sh deploy/cloud_run_incident_review_actions_job.env
+```
+
+Recommended usage:
+
+- start with `ACTION_EXECUTE=false` so the scheduled job only prints the planned incident actions to logs
+- once validated, switch to `ACTION_EXECUTE=true`
+- keep `ACTION_MIN_SEVERITY=critical` in the first production rollout
+- reuse the same `REVIEW_JOB_NAME` as the deployed review-pack job for that region
+- keep `ACTION_GCS_PREFIX` and `REVIEW_GCS_PREFIX` aligned with the same artifact subtree
+- the incident-action job does not need Telegram secrets; it reuses the review-pack job, which already owns Telegram delivery
+- if the production image does not start in the repo root, override `ACTION_SCRIPT_PATH` and `REVIEW_SCRIPT_PATH` with in-container absolute paths
+
 ## Incident trigger dashboard jobs
 
 Use a separate env file for scheduled trigger dashboards:
@@ -158,6 +187,7 @@ Recommended usage:
 - use `DASHBOARD_STRATEGY_PROFILE` or `DASHBOARD_PAPER_ACCOUNT_GROUP` only when an intentionally narrower dashboard is needed
 - if the production image does not start in the repo root, override `DASHBOARD_SCRIPT_PATH` with the in-container absolute path
 - keep the dashboard job separate from the review-pack jobs so operators can inspect triggers before opening an incident replay
+- if auto-open is enabled, still keep the dashboard job because it remains the operator-facing source of truth for why an incident review was opened
 
 ## Notes
 
