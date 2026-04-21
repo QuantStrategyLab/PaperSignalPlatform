@@ -121,6 +121,7 @@ PaperSignalPlatform/
     gcp_deployment.md
   deploy/
     cloud_run_job.env.example
+    cloud_run_review_pack_job.env.example
     cloud_run_summary_job.env.example
   entrypoints/
     cloud_run.py
@@ -129,6 +130,8 @@ PaperSignalPlatform/
   scripts/
     deploy_cloud_run_job.sh
     deploy_cloud_scheduler_job.sh
+    deploy_operator_review_pack_job.sh
+    deploy_operator_review_pack_scheduler.sh
     deploy_operator_summary_job.sh
     deploy_operator_summary_scheduler.sh
     print_operator_review_pack.py
@@ -242,7 +245,13 @@ Scheduled summary delivery:
 2. deploy the Cloud Run Job with [scripts/deploy_operator_summary_job.sh](/home/ubuntu/Projects/PaperSignalPlatform/scripts/deploy_operator_summary_job.sh)
 3. attach the Scheduler trigger with [scripts/deploy_operator_summary_scheduler.sh](/home/ubuntu/Projects/PaperSignalPlatform/scripts/deploy_operator_summary_scheduler.sh)
 
+Scheduled review-pack delivery:
+
+1. use [deploy/cloud_run_review_pack_job.env.example](/home/ubuntu/Projects/PaperSignalPlatform/deploy/cloud_run_review_pack_job.env.example) as the template
+2. deploy the Cloud Run Job with [scripts/deploy_operator_review_pack_job.sh](/home/ubuntu/Projects/PaperSignalPlatform/scripts/deploy_operator_review_pack_job.sh)
+3. attach the Scheduler trigger with [scripts/deploy_operator_review_pack_scheduler.sh](/home/ubuntu/Projects/PaperSignalPlatform/scripts/deploy_operator_review_pack_scheduler.sh)
+
 Next changes should be:
 
 1. onboard the remaining shared snapshot profiles that are still research-only in rollout
-2. add scheduled delivery for monthly or incident-oriented operator review packs
+2. standardize one incident playbook on top of the new review-pack jobs

@@ -13,6 +13,7 @@ Suggested project boundary:
 - one or more Cloud Run Jobs
 - one Cloud Scheduler job per runtime job
 - optional separate Cloud Run Jobs for daily or weekly operator summaries
+- optional separate Cloud Run Jobs for monthly or incident-oriented operator review packs
 - no broker secrets
 - no broker gateway connectivity
 - no live trading IAM roles
@@ -100,6 +101,32 @@ Recommended usage:
 - use `SUMMARY_STRATEGY_PROFILE` or `SUMMARY_PAPER_ACCOUNT_GROUP` only when a narrower summary is needed
 - if the production image does not start in the repo root, override `SUMMARY_SCRIPT_PATH` with the in-container absolute path
 - keep the summary job separate from the per-strategy paper signal jobs
+
+## Operator review pack jobs
+
+Use a separate env file for monthly or incident-oriented review packs:
+
+1. Copy [deploy/cloud_run_review_pack_job.env.example](/home/ubuntu/Projects/PaperSignalPlatform/deploy/cloud_run_review_pack_job.env.example) to a local env file and fill in the real values.
+2. Deploy or update the review-pack Cloud Run Job:
+
+```bash
+./scripts/deploy_operator_review_pack_job.sh deploy/cloud_run_review_pack_job.env
+```
+
+3. Deploy or update the review-pack Cloud Scheduler trigger:
+
+```bash
+./scripts/deploy_operator_review_pack_scheduler.sh deploy/cloud_run_review_pack_job.env
+```
+
+Recommended usage:
+
+- one monthly review-pack job per operating region or account cluster
+- set `REVIEW_TYPE=incident` only for ad hoc or incident-specific windows
+- use `REVIEW_GCS_PREFIX` to scope to one artifact subtree
+- use `REVIEW_STRATEGY_PROFILE` or `REVIEW_PAPER_ACCOUNT_GROUP` only when a narrower review is needed
+- if the production image does not start in the repo root, override `REVIEW_SCRIPT_PATH` with the in-container absolute path
+- keep the review-pack job separate from the per-strategy paper signal jobs and from the daily summary jobs
 
 ## Notes
 
