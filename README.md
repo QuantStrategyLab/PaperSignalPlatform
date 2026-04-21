@@ -39,12 +39,14 @@ This scaffold sets up:
 - paper account-group config contract
 - Cloud Run entrypoint scaffold
 - notification/state/execution service boundaries
-- minimal paper cycles for the currently supported direct-runtime input modes
+- minimal paper cycles for the currently supported direct-runtime and pure
+  feature-snapshot input modes
 
 Current live state of the scaffold:
 
 - shared `paper_signal` adapters now exist upstream in `UsEquityStrategies`
 - `global_etf_rotation`, `tqqq_growth_income`, and `soxl_soxx_trend_income` can run end-to-end in this repo
+- `russell_1000_multi_factor_defensive` now runs through the shared `feature_snapshot` path
 - the cycle supports `signal -> next-session pending plan -> simulated execution`
 - unsupported input modes still return scaffold-only status until their paper cycle
   wiring lands
@@ -192,8 +194,9 @@ Current tested minimal routes:
 1. `global_etf_rotation`
 2. `tqqq_growth_income`
 3. `soxl_soxx_trend_income`
+4. `russell_1000_multi_factor_defensive`
 
-All three currently support:
+All four currently support:
 
 1. run after close
 2. queue a next-session paper rebalance
@@ -202,6 +205,6 @@ All three currently support:
 
 Next changes should be:
 
-1. extend the paper cycle beyond `market_history`, `benchmark_history + portfolio_snapshot`, and `derived_indicators + portfolio_snapshot`
+1. extend the paper cycle beyond the currently supported direct-runtime and pure `feature_snapshot` routes
 2. add richer Telegram formatting and operator scripts
-3. onboard `feature_snapshot`-backed shared profiles
+3. onboard the remaining shared snapshot and hybrid profiles

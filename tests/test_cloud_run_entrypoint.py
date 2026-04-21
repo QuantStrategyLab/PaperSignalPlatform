@@ -31,7 +31,9 @@ def test_root_returns_scaffold_payload(monkeypatch):
         cloud_run,
         "load_strategy_runtime",
         lambda settings: SimpleNamespace(
-            required_inputs=frozenset({"feature_snapshot"}),
+            required_inputs=frozenset(
+                {"feature_snapshot", "market_history", "benchmark_history", "portfolio_snapshot"}
+            ),
             describe=lambda: {
                 "strategy_profile": settings.strategy_profile,
                 "paper_account_group": settings.paper_account_group,
@@ -147,6 +149,57 @@ def test_root_runs_cycle_for_derived_indicator_profile(monkeypatch):
         cloud_run,
         "get_platform_profile_status_matrix",
         lambda: [{"profile": "soxl_soxx_trend_income"}],
+    )
+    app = create_app()
+    client = app.test_client()
+
+    response = client.post("/")
+
+    assert response.status_code == 200
+    assert response.get_json()["status"] == "ok"
+    assert response.get_json()["summary"]["queue_status"] == "queued_pending_plan"
+
+
+def test_root_runs_cycle_for_feature_snapshot_profile(monkeypatch):
+    import entrypoints.cloud_run as cloud_run
+
+    monkeypatch.setattr(
+        cloud_run,
+        "load_platform_runtime_settings",
+        lambda project_id_resolver: SimpleNamespace(
+            strategy_profile="russell_1000_multi_factor_defensive",
+            paper_account_group="sg_r1000_notify",
+            service_name="paper-signal-r1000-sg",
+            market_data_provider="yfinance",
+        ),
+    )
+    monkeypatch.setattr(
+        cloud_run,
+        "load_strategy_runtime",
+        lambda settings: SimpleNamespace(
+            required_inputs=frozenset({"feature_snapshot"}),
+            describe=lambda: {
+                "strategy_profile": settings.strategy_profile,
+                "paper_account_group": settings.paper_account_group,
+                "service_name": settings.service_name,
+                "mode": "paper_only",
+            },
+        ),
+    )
+    monkeypatch.setattr(cloud_run, "build_runtime_dependencies", lambda settings: object())
+    monkeypatch.setattr(cloud_run, "YFinanceDailyBarProvider", lambda: object())
+    monkeypatch.setattr(
+        cloud_run,
+        "run_paper_signal_cycle",
+        lambda settings, runtime, dependencies, market_data_provider: SimpleNamespace(
+            status="ok",
+            summary={"as_of": "2026-04-08", "queue_status": "queued_pending_plan"},
+        ),
+    )
+    monkeypatch.setattr(
+        cloud_run,
+        "get_platform_profile_status_matrix",
+        lambda: [{"profile": "russell_1000_multi_factor_defensive"}],
     )
     app = create_app()
     client = app.test_client()

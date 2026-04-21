@@ -288,6 +288,90 @@ def test_soxl_soxx_trend_income_cycle_executes_and_requeues_next_day_plan():
     assert len(artifact_writer.records) == 2
 
 
+def test_russell_feature_snapshot_cycle_executes_and_requeues_next_day_plan(tmp_path):
+    snapshot_path = tmp_path / "russell_1000_multi_factor_defensive_feature_snapshot_latest.csv"
+    snapshot_path.write_text(_build_russell_feature_snapshot_csv(), encoding="utf-8")
+    settings = PlatformRuntimeSettings(
+        project_id=None,
+        strategy_profile="russell_1000_multi_factor_defensive",
+        strategy_display_name="Russell 1000 Multi-Factor",
+        strategy_domain="us_equity",
+        strategy_target_mode="weight",
+        strategy_artifact_root=None,
+        strategy_artifact_dir=None,
+        feature_snapshot_path=str(snapshot_path),
+        feature_snapshot_manifest_path=None,
+        strategy_config_path=None,
+        strategy_config_source=None,
+        reconciliation_output_path=None,
+        paper_account_group="sg_r1000_notify",
+        service_name="paper-signal-r1000-sg",
+        account_alias="sg-paper-r1000",
+        base_currency="USD",
+        market_calendar="XNYS",
+        starting_equity=100000.0,
+        slippage_bps=0.0,
+        commission_bps=0.0,
+        fill_model="next_open",
+        artifact_bucket_prefix=None,
+        gcs_bucket=None,
+        firestore_collection="paper_signal_states",
+        state_store_backend="memory",
+        artifact_store_backend="local_json",
+        state_dir="/tmp/paper-signal-state",
+        artifact_dir="/tmp/paper-signal-artifacts",
+        market_data_provider="fake",
+        history_lookback_days=420,
+        tg_token=None,
+        tg_chat_id=None,
+        notify_lang="en",
+    )
+    runtime = load_strategy_runtime(settings)
+    state_store = InMemoryPaperStateStore()
+    artifact_writer = RecordingArtifactWriter()
+    notification_port = RecordingNotificationPort()
+    dependencies = PaperSignalRuntimeDependencies(
+        state_store=state_store,
+        artifact_writer=artifact_writer,
+        notification_port=notification_port,
+    )
+    provider = FakeDailyBarProvider(_build_russell_bars(end_date="2026-04-08"))
+
+    first = run_paper_signal_cycle(
+        settings=settings,
+        runtime=runtime,
+        dependencies=dependencies,
+        market_data_provider=provider,
+        as_of_date="2026-04-07",
+    )
+
+    assert first.status == "ok"
+    assert first.summary["execution"]["status"] == "no_pending_plan"
+    assert first.summary["queue_status"] == "queued_pending_plan"
+    pending = state_store.load(settings.paper_account_group).metadata["pending_plan"]
+    assert pending["effective_date"] == "2026-04-08"
+    assert {"AAPL", "MSFT", "LLY", "JPM"}.issubset(set(pending["targets"]))
+
+    second = run_paper_signal_cycle(
+        settings=settings,
+        runtime=runtime,
+        dependencies=dependencies,
+        market_data_provider=provider,
+        as_of_date="2026-04-08",
+    )
+
+    assert second.status == "ok"
+    assert second.summary["execution"]["status"] == "executed_pending_plan"
+    assert second.summary["queue_status"] == "queued_pending_plan"
+    assert {"AAPL", "MSFT", "LLY", "JPM"}.issubset(
+        {row["symbol"] for row in second.summary["positions"]}
+    )
+    latest_state = state_store.load(settings.paper_account_group)
+    assert latest_state.metadata["pending_plan"]["effective_date"] == "2026-04-09"
+    assert len(notification_port.messages) == 2
+    assert len(artifact_writer.records) == 2
+
+
 def _build_global_rotation_bars(*, end_date: str) -> dict[str, pd.DataFrame]:
     symbols = (
         "EWY", "EWT", "INDA", "FXI", "EWJ", "VGK", "VOO", "XLK", "SMH", "GLD", "SLV",
@@ -392,6 +476,107 @@ def _build_soxl_trend_income_bars(*, end_date: str) -> dict[str, pd.DataFrame]:
                 "low": open_ * 0.99,
                 "close": close,
                 "volume": 2_500_000.0,
+            }
+        )
+    return bars_by_symbol
+
+
+def _build_russell_feature_snapshot_csv() -> str:
+    rows = [
+        {
+            "symbol": "SPY",
+            "as_of": "2026-03-31",
+            "sector": "Index",
+            "mom_6_1": 0.10,
+            "mom_12_1": 0.15,
+            "sma200_gap": 0.08,
+            "vol_63": 0.12,
+            "maxdd_126": -0.10,
+            "eligible": True,
+        },
+        {
+            "symbol": "AAPL",
+            "as_of": "2026-03-31",
+            "sector": "Information Technology",
+            "mom_6_1": 0.42,
+            "mom_12_1": 0.51,
+            "sma200_gap": 0.18,
+            "vol_63": 0.21,
+            "maxdd_126": -0.14,
+            "eligible": True,
+        },
+        {
+            "symbol": "MSFT",
+            "as_of": "2026-03-31",
+            "sector": "Information Technology",
+            "mom_6_1": 0.38,
+            "mom_12_1": 0.45,
+            "sma200_gap": 0.17,
+            "vol_63": 0.19,
+            "maxdd_126": -0.12,
+            "eligible": True,
+        },
+        {
+            "symbol": "LLY",
+            "as_of": "2026-03-31",
+            "sector": "Health Care",
+            "mom_6_1": 0.35,
+            "mom_12_1": 0.41,
+            "sma200_gap": 0.16,
+            "vol_63": 0.18,
+            "maxdd_126": -0.13,
+            "eligible": True,
+        },
+        {
+            "symbol": "JPM",
+            "as_of": "2026-03-31",
+            "sector": "Financials",
+            "mom_6_1": 0.31,
+            "mom_12_1": 0.37,
+            "sma200_gap": 0.14,
+            "vol_63": 0.20,
+            "maxdd_126": -0.15,
+            "eligible": True,
+        },
+    ]
+    frame = pd.DataFrame(rows)
+    return frame.to_csv(index=False)
+
+
+def _build_russell_bars(*, end_date: str) -> dict[str, pd.DataFrame]:
+    symbols = ("SPY", "BOXX", "AAPL", "MSFT", "LLY", "JPM")
+    index = pd.bdate_range(end=pd.Timestamp(end_date), periods=220)
+    bars_by_symbol: dict[str, pd.DataFrame] = {}
+    slopes = {
+        "SPY": 0.25,
+        "BOXX": 0.01,
+        "AAPL": 0.60,
+        "MSFT": 0.55,
+        "LLY": 0.45,
+        "JPM": 0.35,
+    }
+    bases = {
+        "SPY": 500.0,
+        "BOXX": 100.0,
+        "AAPL": 190.0,
+        "MSFT": 410.0,
+        "LLY": 770.0,
+        "JPM": 220.0,
+    }
+    for symbol in symbols:
+        close = pd.Series(
+            [bases[symbol] + slopes[symbol] * step for step in range(len(index))],
+            index=index,
+            dtype=float,
+        )
+        open_ = close * 0.995
+        bars_by_symbol[symbol] = pd.DataFrame(
+            {
+                "open": open_,
+                "high": close * 1.01,
+                "low": open_ * 0.99,
+                "close": close,
+                "volume": 3_000_000.0,
             }
         )
     return bars_by_symbol

@@ -5,7 +5,11 @@ from typing import Any, Mapping
 import pandas as pd
 
 from quant_platform_kit.common.models import PortfolioSnapshot, Position
-from quant_platform_kit.strategy_contracts import StrategyContext
+from quant_platform_kit.common.feature_snapshot_runtime import (
+    FeatureSnapshotRuntimeSettings,
+    evaluate_feature_snapshot_strategy,
+)
+from quant_platform_kit.strategy_contracts import StrategyContext, build_execution_timing_metadata
 
 from application.cycle_result import SignalCycleResult
 from application.market_data_service import (
@@ -41,21 +45,28 @@ def run_paper_signal_cycle(
         frozenset({"market_history"}),
         frozenset({"benchmark_history", "portfolio_snapshot"}),
         frozenset({"derived_indicators", "portfolio_snapshot"}),
+        frozenset({"feature_snapshot"}),
     }:
         raise NotImplementedError(
             "Minimal paper cycle currently supports market_history, "
             "benchmark_history+portfolio_snapshot, and "
-            "derived_indicators+portfolio_snapshot profiles"
+            "derived_indicators+portfolio_snapshot, and "
+            "feature_snapshot profiles"
         )
 
     state = dependencies.state_store.load(settings.paper_account_group) or _bootstrap_state(settings)
     symbols = _resolve_required_symbols(runtime, state)
-    bars_by_symbol = market_data_provider.fetch_daily_bars(
-        symbols,
-        as_of_date=pd.Timestamp(as_of_date).normalize() if as_of_date is not None else pd.Timestamp.utcnow().tz_localize(None).normalize(),
-        lookback_days=settings.history_lookback_days,
+    requested_as_of = _normalize_as_of_date(as_of_date)
+    bars_by_symbol = (
+        market_data_provider.fetch_daily_bars(
+            symbols,
+            as_of_date=requested_as_of,
+            lookback_days=settings.history_lookback_days,
+        )
+        if symbols
+        else {}
     )
-    as_of_session = latest_available_session(bars_by_symbol)
+    as_of_session = latest_available_session(bars_by_symbol) if bars_by_symbol else requested_as_of
 
     state, execution_summary = _apply_pending_plan(
         state=state,
@@ -74,25 +85,20 @@ def run_paper_signal_cycle(
         bars_by_symbol=bars_by_symbol,
         account_hash=settings.paper_account_group,
     )
-    decision = runtime.entrypoint.evaluate(
-        StrategyContext(
-            as_of=as_of_session,
-            market_data=_build_market_data_inputs(
-                runtime=runtime,
-                bars_by_symbol=bars_by_symbol,
-            ),
-            portfolio=portfolio_snapshot,
-            state={"current_holdings": tuple(position.symbol for position in portfolio_snapshot.positions)},
-            runtime_config=_build_runtime_config_inputs(
-                runtime=runtime,
-                settings=settings,
-            ),
-        )
+    decision, runtime_metadata = _evaluate_strategy_decision(
+        runtime=runtime,
+        settings=settings,
+        as_of_session=as_of_session,
+        bars_by_symbol=bars_by_symbol,
+        portfolio_snapshot=portfolio_snapshot,
     )
     allocation_payload, decision_metadata = map_strategy_decision(
         decision,
         strategy_profile=runtime.profile,
-        runtime_metadata={"service_name": settings.service_name},
+        runtime_metadata={
+            "service_name": settings.service_name,
+            **dict(runtime_metadata),
+        },
     )
     pending_plan, queue_status = _queue_pending_plan(
         state=state,
@@ -168,6 +174,7 @@ def _resolve_required_symbols(
     state: PaperAccountState,
 ) -> tuple[str, ...]:
     config = dict(runtime.entrypoint.manifest.default_config)
+    pending_plan = dict((state.metadata or {}).get("pending_plan") or {})
     symbols: list[str] = []
     seen: set[str] = set()
     for source in (
@@ -176,6 +183,7 @@ def _resolve_required_symbols(
         config.get("managed_symbols") or (),
         (config.get("benchmark_symbol"),),
         (config.get("safe_haven"),),
+        tuple((pending_plan.get("strategy_symbols") or ())),
         tuple((state.positions or {}).keys()),
     ):
         for raw_symbol in source or ():
@@ -185,6 +193,73 @@ def _resolve_required_symbols(
             seen.add(symbol)
             symbols.append(symbol)
     return tuple(symbols)
+
+
+def _normalize_as_of_date(as_of_date: str | pd.Timestamp | None) -> pd.Timestamp:
+    if as_of_date is None:
+        return pd.Timestamp.utcnow().tz_localize(None).normalize()
+    return pd.Timestamp(as_of_date).normalize()
+
+
+def _evaluate_strategy_decision(
+    *,
+    runtime: LoadedStrategyRuntime,
+    settings: PlatformRuntimeSettings,
+    as_of_session: pd.Timestamp,
+    bars_by_symbol: dict[str, pd.DataFrame],
+    portfolio_snapshot: PortfolioSnapshot,
+) -> tuple[Any, dict[str, Any]]:
+    runtime_config = _build_runtime_config_inputs(
+        runtime=runtime,
+        settings=settings,
+    )
+    if runtime.required_inputs == frozenset({"feature_snapshot"}):
+        signal_delay = runtime.runtime_adapter.runtime_policy.signal_effective_after_trading_days
+        if signal_delay is None:
+            signal_delay = 1
+        snapshot_result = evaluate_feature_snapshot_strategy(
+            entrypoint=runtime.entrypoint,
+            runtime_adapter=runtime.runtime_adapter,
+            runtime_settings=FeatureSnapshotRuntimeSettings(
+                feature_snapshot_path=settings.feature_snapshot_path,
+                feature_snapshot_manifest_path=settings.feature_snapshot_manifest_path,
+                strategy_config_path=settings.strategy_config_path,
+                strategy_config_source=settings.strategy_config_source,
+                dry_run_only=False,
+            ),
+            runtime_config=runtime_config,
+            merged_runtime_config=runtime.merged_runtime_config or runtime.entrypoint.manifest.default_config,
+            as_of=as_of_session.to_pydatetime(),
+            base_managed_symbols=tuple(
+                str(symbol)
+                for symbol in ((runtime.merged_runtime_config or {}).get("managed_symbols") or ())
+            ),
+            include_strategy_display_name=True,
+            set_run_as_of=True,
+            catch_evaluation_errors=True,
+        )
+        metadata = {
+            **build_execution_timing_metadata(
+                signal_date=as_of_session,
+                signal_effective_after_trading_days=signal_delay,
+            ),
+            **dict(snapshot_result.metadata),
+        }
+        return snapshot_result.decision, metadata
+
+    decision = runtime.entrypoint.evaluate(
+        StrategyContext(
+            as_of=as_of_session,
+            market_data=_build_market_data_inputs(
+                runtime=runtime,
+                bars_by_symbol=bars_by_symbol,
+            ),
+            portfolio=portfolio_snapshot,
+            state={"current_holdings": tuple(position.symbol for position in portfolio_snapshot.positions)},
+            runtime_config=runtime_config,
+        )
+    )
+    return decision, {}
 
 
 def _apply_pending_plan(

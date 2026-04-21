@@ -57,12 +57,14 @@ The first concrete paths are now wired for:
 - `market_history`
 - `benchmark_history + portfolio_snapshot`
 - `derived_indicators + portfolio_snapshot`
+- `feature_snapshot`
 
 Current shared profiles covered by those routes:
 
 - `global_etf_rotation`
 - `tqqq_growth_income`
 - `soxl_soxx_trend_income`
+- `russell_1000_multi_factor_defensive`
 
 1. load shared entrypoint/runtime adapter
 2. fetch daily bars from a brokerless market-data provider
