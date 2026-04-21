@@ -32,6 +32,11 @@ python scripts/print_incident_trigger_dashboard.py --period daily --as-of 2026-0
 The dashboard only surfaces abnormal books and suggests one incident window and
 incident identifier per affected `strategy_profile x paper_account_group`.
 
+For routine operations, this dashboard can also be scheduled as its own Cloud
+Run Job. See
+[docs/gcp_deployment.md](/home/ubuntu/Projects/PaperSignalPlatform/docs/gcp_deployment.md)
+for the incident dashboard deployment template.
+
 ## Incident naming
 
 Use one canonical incident identifier:

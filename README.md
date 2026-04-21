@@ -122,6 +122,7 @@ PaperSignalPlatform/
     gcp_deployment.md
     incident_playbook.md
   deploy/
+    cloud_run_incident_dashboard_job.env.example
     cloud_run_job.env.example
     operator_incident_review.env.example
     cloud_run_review_pack_job.env.example
@@ -133,6 +134,8 @@ PaperSignalPlatform/
   scripts/
     deploy_cloud_run_job.sh
     deploy_cloud_scheduler_job.sh
+    deploy_incident_trigger_dashboard_job.sh
+    deploy_incident_trigger_dashboard_scheduler.sh
     deploy_operator_review_pack_job.sh
     deploy_operator_review_pack_scheduler.sh
     deploy_operator_summary_job.sh
@@ -257,6 +260,12 @@ Scheduled review-pack delivery:
 2. deploy the Cloud Run Job with [scripts/deploy_operator_review_pack_job.sh](/home/ubuntu/Projects/PaperSignalPlatform/scripts/deploy_operator_review_pack_job.sh)
 3. attach the Scheduler trigger with [scripts/deploy_operator_review_pack_scheduler.sh](/home/ubuntu/Projects/PaperSignalPlatform/scripts/deploy_operator_review_pack_scheduler.sh)
 
+Scheduled incident dashboard delivery:
+
+1. use [deploy/cloud_run_incident_dashboard_job.env.example](/home/ubuntu/Projects/PaperSignalPlatform/deploy/cloud_run_incident_dashboard_job.env.example) as the template
+2. deploy the Cloud Run Job with [scripts/deploy_incident_trigger_dashboard_job.sh](/home/ubuntu/Projects/PaperSignalPlatform/scripts/deploy_incident_trigger_dashboard_job.sh)
+3. attach the Scheduler trigger with [scripts/deploy_incident_trigger_dashboard_scheduler.sh](/home/ubuntu/Projects/PaperSignalPlatform/scripts/deploy_incident_trigger_dashboard_scheduler.sh)
+
 Incident playbook:
 
 1. use [docs/incident_playbook.md](/home/ubuntu/Projects/PaperSignalPlatform/docs/incident_playbook.md) for trigger rules, incident naming, window selection, and Telegram routing
@@ -267,4 +276,4 @@ Incident playbook:
 Next changes should be:
 
 1. onboard the remaining shared snapshot profiles that are still research-only in rollout
-2. decide whether the incident trigger dashboard itself should get scheduled delivery
+2. decide whether scheduled dashboard findings should auto-open a narrower incident review pack

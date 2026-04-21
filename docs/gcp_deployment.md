@@ -14,6 +14,7 @@ Suggested project boundary:
 - one Cloud Scheduler job per runtime job
 - optional separate Cloud Run Jobs for daily or weekly operator summaries
 - optional separate Cloud Run Jobs for monthly or incident-oriented operator review packs
+- optional separate Cloud Run Jobs for daily or weekly incident trigger dashboards
 - no broker secrets
 - no broker gateway connectivity
 - no live trading IAM roles
@@ -131,6 +132,32 @@ Recommended usage:
 For ad hoc incident execution, keep one deployed review-pack job per region and
 reuse it with [docs/incident_playbook.md](/home/ubuntu/Projects/PaperSignalPlatform/docs/incident_playbook.md) plus
 [scripts/execute_operator_incident_review_pack.sh](/home/ubuntu/Projects/PaperSignalPlatform/scripts/execute_operator_incident_review_pack.sh).
+
+## Incident trigger dashboard jobs
+
+Use a separate env file for scheduled trigger dashboards:
+
+1. Copy [deploy/cloud_run_incident_dashboard_job.env.example](/home/ubuntu/Projects/PaperSignalPlatform/deploy/cloud_run_incident_dashboard_job.env.example) to a local env file and fill in the real values.
+2. Deploy or update the incident dashboard Cloud Run Job:
+
+```bash
+./scripts/deploy_incident_trigger_dashboard_job.sh deploy/cloud_run_incident_dashboard_job.env
+```
+
+3. Deploy or update the incident dashboard Cloud Scheduler trigger:
+
+```bash
+./scripts/deploy_incident_trigger_dashboard_scheduler.sh deploy/cloud_run_incident_dashboard_job.env
+```
+
+Recommended usage:
+
+- one daily dashboard job per operating region or account cluster
+- keep `DASHBOARD_GCS_PREFIX` aligned with the same artifact subtree used by the paper jobs in that region
+- keep `DASHBOARD_REGION_CODE` short and stable because it feeds the suggested incident ids
+- use `DASHBOARD_STRATEGY_PROFILE` or `DASHBOARD_PAPER_ACCOUNT_GROUP` only when an intentionally narrower dashboard is needed
+- if the production image does not start in the repo root, override `DASHBOARD_SCRIPT_PATH` with the in-container absolute path
+- keep the dashboard job separate from the review-pack jobs so operators can inspect triggers before opening an incident replay
 
 ## Notes
 
