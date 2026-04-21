@@ -17,6 +17,8 @@
 - final Telegram wording and audit artifacts
 - operator summaries and review packs derived from persisted artifacts
 - incident trigger dashboards derived from persisted artifacts
+- incident action plans that reuse review-pack jobs instead of creating a second
+  review implementation path
 - isolated paper-only GCP deployment conventions
 
 ## What does not belong here
@@ -33,9 +35,12 @@
 When adding a new strategy for this platform:
 
 1. add or update the shared profile in `UsEquityStrategies`
-2. add a `paper_signal` runtime adapter upstream
-3. keep strategy outputs in standard `StrategyDecision` form
-4. only then enable the profile here through rollout policy
+2. keep the profile structurally portable across `ibkr`, `schwab`,
+   `longbridge`, and `paper_signal` by default
+3. add the `paper_signal` runtime adapter upstream alongside the live-runtime
+   adapters
+4. keep strategy outputs in standard `StrategyDecision` form
+5. only then enable the profile here through rollout policy
 
 Do not patch around missing shared adapters by adding a local strategy
 implementation in this repository.
@@ -102,6 +107,9 @@ Durable runtime backends now supported:
 - `Firestore` for latest paper-account state
 - `GCS` for reconciliation JSON artifacts
 - `local_json` remains available for local development and tests
+- optional scheduled incident auto-open now reuses the deployed review-pack job
+  through Cloud Run Jobs API overrides, so the dashboard, review pack, and
+  auto-open path stay on one shared artifact contract
 
 When deploying with Google Cloud, use a dedicated paper-only project instead of
 sharing the same project with live broker runtimes. This repo should never need

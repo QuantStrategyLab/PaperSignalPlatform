@@ -37,6 +37,20 @@ Run Job. See
 [docs/gcp_deployment.md](/home/ubuntu/Projects/PaperSignalPlatform/docs/gcp_deployment.md)
 for the incident dashboard deployment template.
 
+## Optional auto-open path
+
+`PaperSignalPlatform` can optionally convert dashboard findings into incident
+review-pack job runs automatically. This should stay conservative:
+
+1. first deploy the action job in preview mode with `ACTION_EXECUTE=false`
+2. review the planned actions in Cloud Run logs for a few trading days
+3. only then turn on `ACTION_EXECUTE=true`
+4. keep the first live threshold at `ACTION_MIN_SEVERITY=critical`
+
+The action job does not build a second review implementation. It reuses the
+deployed review-pack Cloud Run Job through run-time argument overrides, so the
+same artifact readers and Telegram rendering stay in one place.
+
 ## Incident naming
 
 Use one canonical incident identifier:
@@ -104,6 +118,12 @@ execution arguments for:
 - the incident label
 - optional strategy/account filters
 - optional Telegram chat override
+
+For scheduled auto-open instead of manual execution, use:
+
+- [deploy/cloud_run_incident_review_actions_job.env.example](/home/ubuntu/Projects/PaperSignalPlatform/deploy/cloud_run_incident_review_actions_job.env.example)
+- [scripts/deploy_incident_review_actions_job.sh](/home/ubuntu/Projects/PaperSignalPlatform/scripts/deploy_incident_review_actions_job.sh)
+- [scripts/deploy_incident_review_actions_scheduler.sh](/home/ubuntu/Projects/PaperSignalPlatform/scripts/deploy_incident_review_actions_scheduler.sh)
 
 ## Output convention
 

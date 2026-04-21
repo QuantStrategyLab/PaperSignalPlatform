@@ -25,8 +25,10 @@ Strategy semantics stay in `UsEquityStrategies`. Shared contracts stay in
 
 1. Strategy code must remain platform-agnostic and live in `UsEquityStrategies`.
 2. This repository must not contain broker SDKs or real order submitters.
-3. New strategy onboarding must add a `paper_signal` runtime adapter upstream in
-   `UsEquityStrategies`, not a platform-local strategy implementation here.
+3. New strategy onboarding must follow the shared four-runtime authoring
+   standard upstream in `UsEquityStrategies`: one shared profile, portable by
+   default across `ibkr`, `schwab`, `longbridge`, and `paper_signal`, with no
+   platform-local strategy fork in this repository.
 4. Paper execution, notification, and state persistence stay local to this
    runtime repo.
 
@@ -57,6 +59,8 @@ Current live state of the scaffold:
   Telegram delivery
 - operator scripts can build one monthly or incident-oriented review pack from
   reconciliation artifacts for stdout or Telegram delivery
+- operator scripts can plan or auto-open narrow incident review runs from
+  incident dashboard findings by reusing the deployed review-pack job
 - unsupported input modes still return scaffold-only status until their paper cycle
   wiring lands
 
@@ -88,6 +92,11 @@ from live trading infrastructure.
 `PaperSignalPlatform` follows the same cross-platform strategy contract as the
 three live broker runtimes.
 
+Greenfield strategy authoring should happen once in `UsEquityStrategies` with
+structural portability across all four runtimes from day one. The only
+platform-local decision is rollout enablement, not strategy math or input
+contract shape.
+
 For a strategy to be considered ready here, it should:
 
 1. be defined in `UsEquityStrategies`
@@ -104,6 +113,7 @@ reject it instead of carrying a platform-local workaround.
 ```text
 PaperSignalPlatform/
   application/
+    operator_incident_actions.py
     cycle_result.py
     notification_renderers.py
     notification_service.py
@@ -123,6 +133,7 @@ PaperSignalPlatform/
     incident_playbook.md
   deploy/
     cloud_run_incident_dashboard_job.env.example
+    cloud_run_incident_review_actions_job.env.example
     cloud_run_job.env.example
     operator_incident_review.env.example
     cloud_run_review_pack_job.env.example
@@ -136,10 +147,13 @@ PaperSignalPlatform/
     deploy_cloud_scheduler_job.sh
     deploy_incident_trigger_dashboard_job.sh
     deploy_incident_trigger_dashboard_scheduler.sh
+    deploy_incident_review_actions_job.sh
+    deploy_incident_review_actions_scheduler.sh
     deploy_operator_review_pack_job.sh
     deploy_operator_review_pack_scheduler.sh
     deploy_operator_summary_job.sh
     deploy_operator_summary_scheduler.sh
+    execute_incident_review_actions.py
     execute_operator_incident_review_pack.sh
     print_incident_trigger_dashboard.py
     print_operator_review_pack.py
@@ -249,6 +263,7 @@ Operator tooling now available:
 3. `scripts/print_operator_summary.py` for one daily or weekly cross-book summary
 4. `scripts/print_operator_review_pack.py` for one monthly or incident-oriented review pack
 5. `scripts/print_incident_trigger_dashboard.py` for one high-signal abnormal-status dashboard before opening an incident review
+6. `scripts/execute_incident_review_actions.py` for one plan-or-execute pass that converts dashboard triggers into incident review-pack job runs
 
 Scheduled summary delivery:
 
@@ -268,14 +283,22 @@ Scheduled incident dashboard delivery:
 2. deploy the Cloud Run Job with [scripts/deploy_incident_trigger_dashboard_job.sh](/home/ubuntu/Projects/PaperSignalPlatform/scripts/deploy_incident_trigger_dashboard_job.sh)
 3. attach the Scheduler trigger with [scripts/deploy_incident_trigger_dashboard_scheduler.sh](/home/ubuntu/Projects/PaperSignalPlatform/scripts/deploy_incident_trigger_dashboard_scheduler.sh)
 
+Scheduled incident auto-open delivery:
+
+1. use [deploy/cloud_run_incident_review_actions_job.env.example](/home/ubuntu/Projects/PaperSignalPlatform/deploy/cloud_run_incident_review_actions_job.env.example) as the template
+2. deploy the Cloud Run Job with [scripts/deploy_incident_review_actions_job.sh](/home/ubuntu/Projects/PaperSignalPlatform/scripts/deploy_incident_review_actions_job.sh)
+3. attach the Scheduler trigger with [scripts/deploy_incident_review_actions_scheduler.sh](/home/ubuntu/Projects/PaperSignalPlatform/scripts/deploy_incident_review_actions_scheduler.sh)
+4. keep the first rollout conservative: `ACTION_EXECUTE=false` for preview, then enable execution with `ACTION_MIN_SEVERITY=critical` only after the dashboard output looks stable
+
 Incident playbook:
 
 1. use [docs/incident_playbook.md](/home/ubuntu/Projects/PaperSignalPlatform/docs/incident_playbook.md) for trigger rules, incident naming, window selection, and Telegram routing
 2. copy [deploy/operator_incident_review.env.example](/home/ubuntu/Projects/PaperSignalPlatform/deploy/operator_incident_review.env.example) for one ad hoc incident run
 3. inspect suggested windows with [scripts/print_incident_trigger_dashboard.py](/home/ubuntu/Projects/PaperSignalPlatform/scripts/print_incident_trigger_dashboard.py)
 4. execute the incident replay with [scripts/execute_operator_incident_review_pack.sh](/home/ubuntu/Projects/PaperSignalPlatform/scripts/execute_operator_incident_review_pack.sh)
+5. optionally enable scheduled auto-open with [scripts/execute_incident_review_actions.py](/home/ubuntu/Projects/PaperSignalPlatform/scripts/execute_incident_review_actions.py) once the dashboard thresholds are validated
 
 Next changes should be:
 
-1. decide whether scheduled dashboard findings should auto-open a narrower incident review pack
-2. evaluate whether any additional research-only profiles beyond the current snapshot/hybrid set deserve paper-only rollout overrides
+1. keep incident auto-open on `critical` until enough artifact history proves warning-level triggers are actionable
+2. continue evaluating whether any additional research-only profiles beyond the current snapshot/hybrid set deserve paper-only rollout overrides
