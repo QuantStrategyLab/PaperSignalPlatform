@@ -39,6 +39,7 @@ This scaffold sets up:
 - paper account-group config contract
 - Cloud Run entrypoint scaffold
 - notification/state/execution service boundaries
+- richer Telegram notification rendering and local operator inspection helpers
 - minimal paper cycles for the currently supported direct-runtime and pure
   feature-snapshot input modes
 
@@ -48,6 +49,8 @@ Current live state of the scaffold:
 - `global_etf_rotation`, `tqqq_growth_income`, and `soxl_soxx_trend_income` can run end-to-end in this repo
 - `russell_1000_multi_factor_defensive` now runs through the shared `feature_snapshot` path
 - the cycle supports `signal -> next-session pending plan -> simulated execution`
+- operator scripts can print current paper account state and preview the latest
+  notification from local or GCS artifacts
 - unsupported input modes still return scaffold-only status until their paper cycle
   wiring lands
 
@@ -96,7 +99,9 @@ reject it instead of carrying a platform-local workaround.
 PaperSignalPlatform/
   application/
     cycle_result.py
+    notification_renderers.py
     notification_service.py
+    operator_support.py
     paper_execution_service.py
     reconciliation_service.py
     runtime_dependencies.py
@@ -115,9 +120,13 @@ PaperSignalPlatform/
   scripts/
     deploy_cloud_run_job.sh
     deploy_cloud_scheduler_job.sh
+    preview_cycle_notification.py
+    print_paper_account_state.py
     print_strategy_profile_status.py
   tests/
     test_cloud_run_entrypoint.py
+    test_notification_renderers.py
+    test_operator_support.py
     test_profile_key_governance.py
     test_runtime_config_support.py
     test_strategy_loader.py
@@ -206,5 +215,5 @@ All four currently support:
 Next changes should be:
 
 1. extend the paper cycle beyond the currently supported direct-runtime and pure `feature_snapshot` routes
-2. add richer Telegram formatting and operator scripts
+2. add daily or weekly operator summaries on top of the per-run Telegram output
 3. onboard the remaining shared snapshot and hybrid profiles

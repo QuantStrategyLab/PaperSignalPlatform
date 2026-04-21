@@ -19,7 +19,7 @@ from application.market_data_service import (
     latest_available_session,
     resolve_effective_session,
 )
-from application.notification_service import NotificationMessage
+from application.notification_renderers import build_cycle_notification_message
 from application.paper_execution_service import (
     PaperExecutionConfig,
     PaperExecutionPlan,
@@ -134,6 +134,8 @@ def run_paper_signal_cycle(
         "decision": _json_safe(decision_metadata),
         "allocation": _json_safe(allocation_payload),
         "execution": execution_summary,
+        "last_execution": _json_safe(next_state.metadata.get("last_execution")),
+        "pending_plan": _json_safe(pending_plan),
         "queue_status": queue_status,
     }
     dependencies.artifact_writer.write_record(
@@ -144,11 +146,7 @@ def run_paper_signal_cycle(
         )
     )
     dependencies.notification_port.publish(
-        NotificationMessage(
-            title=f"{runtime.profile} paper signal",
-            body=_render_notification_body(summary),
-            metadata={"strategy_profile": runtime.profile},
-        )
+        build_cycle_notification_message(summary, lang=settings.notify_lang)
     )
     return SignalCycleResult(
         status="ok",
@@ -484,23 +482,6 @@ def _build_translator(lang: str):
         return template.format(**kwargs)
 
     return _translator
-
-
-def _render_notification_body(summary: Mapping[str, Any]) -> str:
-    allocation = summary.get("allocation") or {}
-    targets = allocation.get("targets") or {}
-    target_lines = ", ".join(f"{symbol}:{value:.2%}" for symbol, value in targets.items()) if allocation.get("target_mode") == "weight" else ", ".join(f"{symbol}:${value:,.2f}" for symbol, value in targets.items())
-    return "\n".join(
-        [
-            f"as_of={summary.get('as_of')}",
-            f"nav={float(summary.get('nav') or 0.0):,.2f}",
-            f"cash={float(summary.get('cash') or 0.0):,.2f}",
-            f"execution={summary.get('execution', {}).get('status')}",
-            f"queue_status={summary.get('queue_status')}",
-            f"signal={(((summary.get('decision') or {}).get('signal_description') or (summary.get('decision') or {}).get('signal_display') or '')).strip()}",
-            f"targets={target_lines or 'none'}",
-        ]
-    )
 
 
 def _json_safe(value: Any) -> Any:
