@@ -4,6 +4,7 @@ import json
 
 from application.operator_support import (
     format_paper_account_state,
+    list_local_reconciliation_records,
     load_latest_local_reconciliation_record,
 )
 from application.state_store_service import PaperAccountState
@@ -67,3 +68,35 @@ def test_load_latest_local_reconciliation_record_applies_filters(tmp_path):
     path, payload = result
     assert path == expected_path
     assert payload["payload"]["as_of"] == "2026-04-22"
+
+
+def test_list_local_reconciliation_records_filters_by_date_profile_and_group(tmp_path):
+    first_dir = tmp_path / "2026-04-20"
+    second_dir = tmp_path / "2026-04-22"
+    first_dir.mkdir()
+    second_dir.mkdir()
+
+    (first_dir / "global_etf_rotation__sg_alpha.json").write_text(
+        json.dumps({"payload": {"as_of": "2026-04-20"}}),
+        encoding="utf-8",
+    )
+    (second_dir / "global_etf_rotation__sg_alpha.json").write_text(
+        json.dumps({"payload": {"as_of": "2026-04-22"}}),
+        encoding="utf-8",
+    )
+    (second_dir / "global_etf_rotation__sg_beta.json").write_text(
+        json.dumps({"payload": {"as_of": "2026-04-22"}}),
+        encoding="utf-8",
+    )
+
+    records = list_local_reconciliation_records(
+        str(tmp_path),
+        strategy_profile="global_etf_rotation",
+        paper_account_group="sg_alpha",
+        start_date="2026-04-21",
+        end_date="2026-04-22",
+    )
+
+    assert len(records) == 1
+    assert records[0][0].name == "global_etf_rotation__sg_alpha.json"
+    assert records[0][1]["payload"]["as_of"] == "2026-04-22"

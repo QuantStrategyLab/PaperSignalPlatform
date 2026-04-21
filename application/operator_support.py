@@ -53,32 +53,50 @@ def load_latest_local_reconciliation_record(
     strategy_profile: str | None = None,
     paper_account_group: str | None = None,
 ) -> tuple[Path, dict[str, Any]] | None:
+    matches = list_local_reconciliation_records(
+        root_dir,
+        strategy_profile=strategy_profile,
+        paper_account_group=paper_account_group,
+    )
+    if not matches:
+        return None
+    return matches[-1]
+
+
+def list_local_reconciliation_records(
+    root_dir: str,
+    *,
+    strategy_profile: str | None = None,
+    paper_account_group: str | None = None,
+    start_date: str | None = None,
+    end_date: str | None = None,
+) -> list[tuple[Path, dict[str, Any]]]:
     root = Path(root_dir)
     if not root.exists():
-        return None
+        return []
 
-    matches: list[Path] = []
+    matches: list[tuple[Path, dict[str, Any]]] = []
     for path in root.glob("*/*.json"):
         if not path.is_file():
             continue
-        if strategy_profile and f"{strategy_profile}__" not in path.name:
+        artifact_date = path.parent.name
+        if start_date and artifact_date < start_date:
+            continue
+        if end_date and artifact_date > end_date:
+            continue
+        if strategy_profile and not path.name.startswith(f"{strategy_profile}__"):
             continue
         if paper_account_group and not path.name.endswith(f"__{paper_account_group}.json"):
             continue
-        matches.append(path)
+        matches.append((path, json.loads(path.read_text(encoding="utf-8"))))
 
-    if not matches:
-        return None
-
-    latest_path = max(
+    return sorted(
         matches,
-        key=lambda path: (
-            path.parent.name,
-            path.stat().st_mtime,
-            path.name,
+        key=lambda item: (
+            item[0].parent.name,
+            item[0].name,
         ),
     )
-    return latest_path, json.loads(latest_path.read_text(encoding="utf-8"))
 
 
 def _format_money(value: Any) -> str:

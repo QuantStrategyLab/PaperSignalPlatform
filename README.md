@@ -51,6 +51,8 @@ Current live state of the scaffold:
 - the cycle supports `signal -> next-session pending plan -> simulated execution`
 - operator scripts can print current paper account state and preview the latest
   notification from local or GCS artifacts
+- operator scripts can also build one daily or weekly summary for stdout or
+  Telegram delivery
 - unsupported input modes still return scaffold-only status until their paper cycle
   wiring lands
 
@@ -102,6 +104,7 @@ PaperSignalPlatform/
     notification_renderers.py
     notification_service.py
     operator_support.py
+    operator_summary.py
     paper_execution_service.py
     reconciliation_service.py
     runtime_dependencies.py
@@ -120,12 +123,14 @@ PaperSignalPlatform/
   scripts/
     deploy_cloud_run_job.sh
     deploy_cloud_scheduler_job.sh
+    print_operator_summary.py
     preview_cycle_notification.py
     print_paper_account_state.py
     print_strategy_profile_status.py
   tests/
     test_cloud_run_entrypoint.py
     test_notification_renderers.py
+    test_operator_summary.py
     test_operator_support.py
     test_profile_key_governance.py
     test_runtime_config_support.py
@@ -212,8 +217,14 @@ All four currently support:
 3. execute the queued rebalance on the next run using stored paper state
 4. write one reconciliation artifact and emit one notification
 
+Operator tooling now available:
+
+1. `scripts/print_paper_account_state.py` for the latest persisted paper book
+2. `scripts/preview_cycle_notification.py` for the latest per-run Telegram body
+3. `scripts/print_operator_summary.py` for one daily or weekly cross-book summary
+
 Next changes should be:
 
 1. extend the paper cycle beyond the currently supported direct-runtime and pure `feature_snapshot` routes
-2. add daily or weekly operator summaries on top of the per-run Telegram output
+2. add scheduled delivery wiring for the daily or weekly operator summaries
 3. onboard the remaining shared snapshot and hybrid profiles
