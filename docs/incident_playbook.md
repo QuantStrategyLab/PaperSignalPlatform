@@ -22,6 +22,16 @@ Open an incident review when any of the following is true:
 4. A single strategy or account group needs a narrow replay window before
    broader monthly review.
 
+Before opening the incident review, operators should first inspect the trigger
+dashboard:
+
+```bash
+python scripts/print_incident_trigger_dashboard.py --period daily --as-of 2026-04-22 --region-code sg
+```
+
+The dashboard only surfaces abnormal books and suggests one incident window and
+incident identifier per affected `strategy_profile x paper_account_group`.
+
 ## Incident naming
 
 Use one canonical incident identifier:
@@ -73,7 +83,9 @@ Guidelines:
    - `INCIDENT_STRATEGY_PROFILE`
    - `INCIDENT_PAPER_ACCOUNT_GROUP`
 4. Optionally override Telegram routing with `INCIDENT_TELEGRAM_CHAT_ID`
-5. Execute the incident review:
+5. Optionally copy the suggested incident identifier from
+   `scripts/print_incident_trigger_dashboard.py`
+6. Execute the incident review:
 
 ```bash
 ./scripts/execute_operator_incident_review_pack.sh deploy/operator_incident_review.env

@@ -16,6 +16,7 @@
 - request orchestration
 - final Telegram wording and audit artifacts
 - operator summaries and review packs derived from persisted artifacts
+- incident trigger dashboards derived from persisted artifacts
 - isolated paper-only GCP deployment conventions
 
 ## What does not belong here

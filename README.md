@@ -107,6 +107,7 @@ PaperSignalPlatform/
     cycle_result.py
     notification_renderers.py
     notification_service.py
+    operator_incident_dashboard.py
     operator_review_pack.py
     operator_support.py
     operator_summary.py
@@ -137,6 +138,7 @@ PaperSignalPlatform/
     deploy_operator_summary_job.sh
     deploy_operator_summary_scheduler.sh
     execute_operator_incident_review_pack.sh
+    print_incident_trigger_dashboard.py
     print_operator_review_pack.py
     print_operator_summary.py
     preview_cycle_notification.py
@@ -241,6 +243,7 @@ Operator tooling now available:
 2. `scripts/preview_cycle_notification.py` for the latest per-run Telegram body
 3. `scripts/print_operator_summary.py` for one daily or weekly cross-book summary
 4. `scripts/print_operator_review_pack.py` for one monthly or incident-oriented review pack
+5. `scripts/print_incident_trigger_dashboard.py` for one high-signal abnormal-status dashboard before opening an incident review
 
 Scheduled summary delivery:
 
@@ -258,9 +261,10 @@ Incident playbook:
 
 1. use [docs/incident_playbook.md](/home/ubuntu/Projects/PaperSignalPlatform/docs/incident_playbook.md) for trigger rules, incident naming, window selection, and Telegram routing
 2. copy [deploy/operator_incident_review.env.example](/home/ubuntu/Projects/PaperSignalPlatform/deploy/operator_incident_review.env.example) for one ad hoc incident run
-3. execute the incident replay with [scripts/execute_operator_incident_review_pack.sh](/home/ubuntu/Projects/PaperSignalPlatform/scripts/execute_operator_incident_review_pack.sh)
+3. inspect suggested windows with [scripts/print_incident_trigger_dashboard.py](/home/ubuntu/Projects/PaperSignalPlatform/scripts/print_incident_trigger_dashboard.py)
+4. execute the incident replay with [scripts/execute_operator_incident_review_pack.sh](/home/ubuntu/Projects/PaperSignalPlatform/scripts/execute_operator_incident_review_pack.sh)
 
 Next changes should be:
 
 1. onboard the remaining shared snapshot profiles that are still research-only in rollout
-2. add one higher-signal incident trigger dashboard on top of the existing review-pack jobs
+2. decide whether the incident trigger dashboard itself should get scheduled delivery
