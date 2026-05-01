@@ -1,0 +1,32 @@
+{
+  "name": "hold10_tp60",
+  "cagr": "1229.64%",
+  "total_return": "1506676.54%",
+  "max_drawdown": "-29.61%",
+  "sharpe": "0.52",
+  "avg_weight": "8.95%",
+  "long_days": "11.25%",
+  "short_days": "6.65%",
+  "cash_days": "82.10%",
+  "rebalance_days": 106,
+  "first_return_date": "2022-08-10",
+  "latest_return_date": "2026-04-29",
+  "observations": 933,
+  "config": {
+    "long_symbol": "CONL",
+    "short_symbol": "CONI",
+    "coin_sma": 150,
+    "momentum_lookback": 5,
+    "momentum_threshold": 0.08,
+    "btc_ma": 150,
+    "coin_rv_cap": 0.9,
+    "max_hold_days": 10,
+    "take_profit": 0.6,
+    "exit_reminder_trading_days": 3,
+    "position_sizing": "fixed",
+    "fixed_weight": 0.5,
+    "vol_target": 0.5,
+    "signal_effective_after_trading_days": 1,
+    "signal_source": "coin_short_hold_fixed50_eod"
+  }
+}

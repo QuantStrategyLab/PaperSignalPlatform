@@ -75,8 +75,8 @@ def test_summarize_incident_trigger_dashboard_groups_abnormal_books_and_suggests
 def test_build_incident_trigger_dashboard_message_renders_english_dashboard():
     records = [
         {
-            "strategy_profile": "dynamic_mega_leveraged_pullback",
-            "paper_account_group": "sg_dynamic_mega",
+            "strategy_profile": "mega_cap_leader_rotation_top50_balanced",
+            "paper_account_group": "sg_mega_top50",
             "payload": {
                 "as_of": "2026-04-22",
                 "queue_status": "manual_review",
@@ -104,7 +104,7 @@ def test_build_incident_trigger_dashboard_message_renders_english_dashboard():
     assert "[Overview]" in message.body
     assert "Region: sg" in message.body
     assert "[Suggested Incidents]" in message.body
-    assert "psp-sg-dynamic-mega-leveraged-pullback-20260422-001" in message.body
+    assert "psp-sg-mega-cap-leader-rotation-top50-balanced-20260422-001" in message.body
     assert "execution=skipped_risk_gate" in message.body
 
 
