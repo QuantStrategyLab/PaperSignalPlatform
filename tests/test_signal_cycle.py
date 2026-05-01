@@ -480,117 +480,6 @@ def test_mega_cap_top50_feature_snapshot_cycle_executes_and_requeues_next_day_pl
     )
 
 
-def test_mega_cap_dynamic_top20_feature_snapshot_cycle_executes_and_requeues_next_day_plan(tmp_path):
-    _assert_mega_cap_feature_snapshot_cycle(
-        tmp_path=tmp_path,
-        strategy_profile="mega_cap_leader_rotation_dynamic_top20",
-        strategy_display_name="Mega Cap Leader Rotation Dynamic Top20",
-        paper_account_group="sg_mega_top20_notify",
-        service_name="paper-signal-mega-top20-sg",
-    )
-
-
-def test_mega_cap_aggressive_feature_snapshot_cycle_executes_and_requeues_next_day_plan(tmp_path):
-    _assert_mega_cap_feature_snapshot_cycle(
-        tmp_path=tmp_path,
-        strategy_profile="mega_cap_leader_rotation_aggressive",
-        strategy_display_name="Mega Cap Leader Rotation Aggressive",
-        paper_account_group="sg_mega_aggressive_notify",
-        service_name="paper-signal-mega-aggressive-sg",
-    )
-
-
-def test_dynamic_mega_hybrid_cycle_executes_and_requeues_next_day_plan(tmp_path):
-    snapshot_path = tmp_path / "dynamic_mega_leveraged_pullback_feature_snapshot_latest.csv"
-    snapshot_path.write_text(_build_dynamic_mega_feature_snapshot_csv(), encoding="utf-8")
-    _write_feature_snapshot_manifest(
-        snapshot_path=snapshot_path,
-        strategy_profile="dynamic_mega_leveraged_pullback",
-        contract_version="dynamic_mega_leveraged_pullback.feature_snapshot.v1",
-        snapshot_as_of="2026-03-31",
-        config_name="dynamic_mega_leveraged_pullback",
-    )
-    settings = PlatformRuntimeSettings(
-        project_id=None,
-        strategy_profile="dynamic_mega_leveraged_pullback",
-        strategy_display_name="Dynamic Mega Leveraged Pullback",
-        strategy_domain="us_equity",
-        strategy_target_mode="weight",
-        strategy_artifact_root=None,
-        strategy_artifact_dir=None,
-        feature_snapshot_path=str(snapshot_path),
-        feature_snapshot_manifest_path=None,
-        strategy_config_path=None,
-        strategy_config_source=None,
-        reconciliation_output_path=None,
-        paper_account_group="sg_dynamic_mega_notify",
-        service_name="paper-signal-dynamic-mega-sg",
-        account_alias="sg-paper-dynamic-mega",
-        base_currency="USD",
-        market_calendar="XNYS",
-        starting_equity=100000.0,
-        slippage_bps=0.0,
-        commission_bps=0.0,
-        fill_model="next_open",
-        artifact_bucket_prefix=None,
-        gcs_bucket=None,
-        firestore_collection="paper_signal_states",
-        state_store_backend="memory",
-        artifact_store_backend="local_json",
-        state_dir="/tmp/paper-signal-state",
-        artifact_dir="/tmp/paper-signal-artifacts",
-        market_data_provider="fake",
-        history_lookback_days=420,
-        tg_token=None,
-        tg_chat_id=None,
-        notify_lang="en",
-    )
-    runtime = load_strategy_runtime(settings)
-    state_store = InMemoryPaperStateStore()
-    artifact_writer = RecordingArtifactWriter()
-    notification_port = RecordingNotificationPort()
-    dependencies = PaperSignalRuntimeDependencies(
-        state_store=state_store,
-        artifact_writer=artifact_writer,
-        notification_port=notification_port,
-    )
-    provider = FakeDailyBarProvider(_build_dynamic_mega_bars(end_date="2026-04-08"))
-
-    first = run_paper_signal_cycle(
-        settings=settings,
-        runtime=runtime,
-        dependencies=dependencies,
-        market_data_provider=provider,
-        as_of_date="2026-04-07",
-    )
-
-    assert first.status == "ok"
-    assert first.summary["execution"]["status"] == "no_pending_plan"
-    assert first.summary["queue_status"] == "queued_pending_plan"
-    pending = state_store.load(settings.paper_account_group).metadata["pending_plan"]
-    assert pending["effective_date"] == "2026-04-08"
-    assert {"AAPL", "MSFT", "NVDA"}.issubset(set(pending["targets"]))
-
-    second = run_paper_signal_cycle(
-        settings=settings,
-        runtime=runtime,
-        dependencies=dependencies,
-        market_data_provider=provider,
-        as_of_date="2026-04-08",
-    )
-
-    assert second.status == "ok"
-    assert second.summary["execution"]["status"] == "executed_pending_plan"
-    assert second.summary["queue_status"] == "queued_pending_plan"
-    assert {"AAPL", "MSFT", "NVDA"}.issubset(
-        {row["symbol"] for row in second.summary["positions"]}
-    )
-    latest_state = state_store.load(settings.paper_account_group)
-    assert latest_state.metadata["pending_plan"]["effective_date"] == "2026-04-09"
-    assert len(notification_port.messages) == 2
-    assert len(artifact_writer.records) == 2
-
-
 def _build_global_rotation_bars(*, end_date: str) -> dict[str, pd.DataFrame]:
     symbols = (
         "EWY", "EWT", "INDA", "FXI", "EWJ", "VGK", "VOO", "XLK", "SMH", "GLD", "SLV",
@@ -1104,42 +993,6 @@ def _build_mega_cap_feature_snapshot_csv() -> str:
     return pd.DataFrame(rows).to_csv(index=False)
 
 
-def _build_dynamic_mega_feature_snapshot_csv() -> str:
-    rows = [
-        {
-            "symbol": "AAPL",
-            "underlying_symbol": "AAPL",
-            "sector": "Information Technology",
-            "candidate_rank": 1,
-            "product_leverage": 2.0,
-            "product_available": True,
-            "eligible": True,
-            "as_of": "2026-03-31",
-        },
-        {
-            "symbol": "MSFT",
-            "underlying_symbol": "MSFT",
-            "sector": "Information Technology",
-            "candidate_rank": 2,
-            "product_leverage": 2.0,
-            "product_available": True,
-            "eligible": True,
-            "as_of": "2026-03-31",
-        },
-        {
-            "symbol": "NVDA",
-            "underlying_symbol": "NVDA",
-            "sector": "Information Technology",
-            "candidate_rank": 3,
-            "product_leverage": 2.0,
-            "product_available": True,
-            "eligible": True,
-            "as_of": "2026-03-31",
-        },
-    ]
-    return pd.DataFrame(rows).to_csv(index=False)
-
-
 def _build_tech_bars(*, end_date: str) -> dict[str, pd.DataFrame]:
     return _build_linear_bars(
         end_date=end_date,
@@ -1207,34 +1060,6 @@ def _build_mega_cap_bars(*, end_date: str) -> dict[str, pd.DataFrame]:
             "NVDA": 7_500_000.0,
             "META": 4_800_000.0,
             "AMZN": 4_600_000.0,
-        },
-    )
-
-
-def _build_dynamic_mega_bars(*, end_date: str) -> dict[str, pd.DataFrame]:
-    return _build_linear_bars(
-        end_date=end_date,
-        periods=320,
-        bases={
-            "QQQ": 300.0,
-            "BOXX": 100.0,
-            "AAPL": 160.0,
-            "MSFT": 300.0,
-            "NVDA": 80.0,
-        },
-        slopes={
-            "QQQ": 0.72,
-            "BOXX": 0.01,
-            "AAPL": 0.46,
-            "MSFT": 0.54,
-            "NVDA": 0.67,
-        },
-        volumes={
-            "QQQ": 8_000_000.0,
-            "BOXX": 600_000.0,
-            "AAPL": 6_500_000.0,
-            "MSFT": 5_900_000.0,
-            "NVDA": 7_500_000.0,
         },
     )
 

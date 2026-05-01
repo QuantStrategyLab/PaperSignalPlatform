@@ -22,19 +22,8 @@ from quant_platform_kit.common.strategies import (
 
 PAPER_SIGNAL_PLATFORM = "paper_signal"
 SUPPORTED_DOMAINS = frozenset({US_EQUITY_DOMAIN})
-PAPER_SIGNAL_RUNTIME_READY_OVERRIDES = frozenset(
-    {
-        "dynamic_mega_leveraged_pullback",
-        "mega_cap_leader_rotation_dynamic_top20",
-        "mega_cap_leader_rotation_aggressive",
-    }
-)
 
-# Keep research-only profiles archived in the shared catalog unless this
-# paper-only runtime explicitly opts them in after local validation.
-PAPER_SIGNAL_ROLLOUT_ALLOWLIST = (
-    get_runtime_enabled_profiles() | PAPER_SIGNAL_RUNTIME_READY_OVERRIDES
-)
+PAPER_SIGNAL_ROLLOUT_ALLOWLIST = get_runtime_enabled_profiles()
 STRATEGY_CATALOG = get_strategy_catalog()
 PLATFORM_CAPABILITY_MATRIX = PlatformCapabilityMatrix(
     platform_id=PAPER_SIGNAL_PLATFORM,

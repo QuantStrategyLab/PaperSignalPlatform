@@ -216,9 +216,9 @@ def test_root_runs_cycle_for_hybrid_feature_snapshot_profile(monkeypatch):
         cloud_run,
         "load_platform_runtime_settings",
         lambda project_id_resolver: SimpleNamespace(
-            strategy_profile="dynamic_mega_leveraged_pullback",
-            paper_account_group="sg_dynamic_mega_notify",
-            service_name="paper-signal-dynamic-mega-sg",
+            strategy_profile="mega_cap_leader_rotation_top50_balanced",
+            paper_account_group="sg_mega_top50_notify",
+            service_name="paper-signal-mega-top50-sg",
             market_data_provider="yfinance",
         ),
     )
@@ -250,7 +250,7 @@ def test_root_runs_cycle_for_hybrid_feature_snapshot_profile(monkeypatch):
     monkeypatch.setattr(
         cloud_run,
         "get_platform_profile_status_matrix",
-        lambda: [{"profile": "dynamic_mega_leveraged_pullback"}],
+        lambda: [{"profile": "mega_cap_leader_rotation_top50_balanced"}],
     )
     app = create_app()
     client = app.test_client()

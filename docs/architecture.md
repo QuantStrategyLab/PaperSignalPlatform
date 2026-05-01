@@ -79,10 +79,7 @@ Current shared profiles covered by those routes:
 - `soxl_soxx_trend_income`
 - `russell_1000_multi_factor_defensive`
 - `tech_communication_pullback_enhancement`
-- `mega_cap_leader_rotation_dynamic_top20`
-- `mega_cap_leader_rotation_aggressive`
 - `mega_cap_leader_rotation_top50_balanced`
-- `dynamic_mega_leveraged_pullback`
 
 1. load shared entrypoint/runtime adapter
 2. fetch daily bars from a brokerless market-data provider
@@ -93,14 +90,9 @@ Current shared profiles covered by those routes:
    a notification
 
 Other input modes still stay on scaffold-only status until their normalized
-paper input builders are implemented, but the main shared snapshot and hybrid
-routes are no longer blocked on platform runtime wiring.
-
-`dynamic_mega_leveraged_pullback`, `mega_cap_leader_rotation_dynamic_top20`,
-and `mega_cap_leader_rotation_aggressive` are the first paper-only rollout
-overrides: they remain `research_only` in `UsEquityStrategies`, but this
-runtime enables them locally because the brokerless paper cycle is now covered
-by tests.
+paper input builders are implemented. PaperSignal follows the shared
+`runtime_enabled` catalog and does not enable local paper-only strategy
+overrides.
 
 Durable runtime backends now supported:
 

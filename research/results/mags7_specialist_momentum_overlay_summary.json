@@ -1,0 +1,1659 @@
+{
+  "requested_end": "2026-05-01",
+  "performance": [
+    {
+      "overlay": "none",
+      "mode": "static_score",
+      "cagr": "42.30%",
+      "max_drawdown": "-31.22%",
+      "total_return": "358.22%",
+      "sharpe": "1.14",
+      "avg_cash": "42.08%",
+      "avg_top_weight": "29.01%",
+      "avg_tactical_active_count": "2.62",
+      "rebalance_days": 348,
+      "first_return_date": "2022-01-04",
+      "latest_return_date": "2026-04-29",
+      "observations": 1083
+    },
+    {
+      "overlay": "none",
+      "mode": "dynamic_score",
+      "cagr": "44.39%",
+      "max_drawdown": "-32.11%",
+      "total_return": "388.00%",
+      "sharpe": "1.17",
+      "avg_cash": "42.23%",
+      "avg_top_weight": "31.01%",
+      "avg_tactical_active_count": "2.62",
+      "rebalance_days": 677,
+      "first_return_date": "2022-01-04",
+      "latest_return_date": "2026-04-29",
+      "observations": 1083
+    },
+    {
+      "overlay": "none",
+      "mode": "dynamic_sqrt_score",
+      "cagr": "42.65%",
+      "max_drawdown": "-30.99%",
+      "total_return": "363.12%",
+      "sharpe": "1.18",
+      "avg_cash": "42.14%",
+      "avg_top_weight": "27.32%",
+      "avg_tactical_active_count": "2.62",
+      "rebalance_days": 664,
+      "first_return_date": "2022-01-04",
+      "latest_return_date": "2026-04-29",
+      "observations": 1083
+    },
+    {
+      "overlay": "top2",
+      "mode": "static_score",
+      "cagr": "37.14%",
+      "max_drawdown": "-35.18%",
+      "total_return": "290.68%",
+      "sharpe": "1.10",
+      "avg_cash": "58.33%",
+      "avg_top_weight": "31.91%",
+      "avg_tactical_active_count": "1.20",
+      "rebalance_days": 301,
+      "first_return_date": "2022-01-04",
+      "latest_return_date": "2026-04-29",
+      "observations": 1083
+    },
+    {
+      "overlay": "top2",
+      "mode": "dynamic_score",
+      "cagr": "38.24%",
+      "max_drawdown": "-34.98%",
+      "total_return": "304.42%",
+      "sharpe": "1.12",
+      "avg_cash": "58.41%",
+      "avg_top_weight": "32.56%",
+      "avg_tactical_active_count": "1.20",
+      "rebalance_days": 564,
+      "first_return_date": "2022-01-04",
+      "latest_return_date": "2026-04-29",
+      "observations": 1083
+    },
+    {
+      "overlay": "top2",
+      "mode": "dynamic_sqrt_score",
+      "cagr": "37.27%",
+      "max_drawdown": "-35.19%",
+      "total_return": "292.30%",
+      "sharpe": "1.12",
+      "avg_cash": "58.01%",
+      "avg_top_weight": "30.07%",
+      "avg_tactical_active_count": "1.20",
+      "rebalance_days": 543,
+      "first_return_date": "2022-01-04",
+      "latest_return_date": "2026-04-29",
+      "observations": 1083
+    },
+    {
+      "overlay": "top3",
+      "mode": "static_score",
+      "cagr": "52.05%",
+      "max_drawdown": "-32.21%",
+      "total_return": "509.90%",
+      "sharpe": "1.40",
+      "avg_cash": "55.34%",
+      "avg_top_weight": "29.33%",
+      "avg_tactical_active_count": "1.64",
+      "rebalance_days": 298,
+      "first_return_date": "2022-01-04",
+      "latest_return_date": "2026-04-29",
+      "observations": 1083
+    },
+    {
+      "overlay": "top3",
+      "mode": "dynamic_score",
+      "cagr": "53.46%",
+      "max_drawdown": "-32.10%",
+      "total_return": "534.70%",
+      "sharpe": "1.42",
+      "avg_cash": "55.49%",
+      "avg_top_weight": "30.36%",
+      "avg_tactical_active_count": "1.64",
+      "rebalance_days": 620,
+      "first_return_date": "2022-01-04",
+      "latest_return_date": "2026-04-29",
+      "observations": 1083
+    },
+    {
+      "overlay": "top3",
+      "mode": "dynamic_sqrt_score",
+      "cagr": "52.41%",
+      "max_drawdown": "-30.56%",
+      "total_return": "516.12%",
+      "sharpe": "1.44",
+      "avg_cash": "55.34%",
+      "avg_top_weight": "26.92%",
+      "avg_tactical_active_count": "1.64",
+      "rebalance_days": 605,
+      "first_return_date": "2022-01-04",
+      "latest_return_date": "2026-04-29",
+      "observations": 1083
+    },
+    {
+      "overlay": "top4",
+      "mode": "static_score",
+      "cagr": "48.53%",
+      "max_drawdown": "-34.80%",
+      "total_return": "451.27%",
+      "sharpe": "1.33",
+      "avg_cash": "53.47%",
+      "avg_top_weight": "27.84%",
+      "avg_tactical_active_count": "1.97",
+      "rebalance_days": 330,
+      "first_return_date": "2022-01-04",
+      "latest_return_date": "2026-04-29",
+      "observations": 1083
+    },
+    {
+      "overlay": "top4",
+      "mode": "dynamic_score",
+      "cagr": "51.19%",
+      "max_drawdown": "-33.60%",
+      "total_return": "495.12%",
+      "sharpe": "1.38",
+      "avg_cash": "53.62%",
+      "avg_top_weight": "28.97%",
+      "avg_tactical_active_count": "1.97",
+      "rebalance_days": 640,
+      "first_return_date": "2022-01-04",
+      "latest_return_date": "2026-04-29",
+      "observations": 1083
+    },
+    {
+      "overlay": "top4",
+      "mode": "dynamic_sqrt_score",
+      "cagr": "49.57%",
+      "max_drawdown": "-32.02%",
+      "total_return": "468.18%",
+      "sharpe": "1.40",
+      "avg_cash": "53.52%",
+      "avg_top_weight": "25.35%",
+      "avg_tactical_active_count": "1.97",
+      "rebalance_days": 627,
+      "first_return_date": "2022-01-04",
+      "latest_return_date": "2026-04-29",
+      "observations": 1083
+    },
+    {
+      "overlay": "top5",
+      "mode": "static_score",
+      "cagr": "47.15%",
+      "max_drawdown": "-33.50%",
+      "total_return": "429.48%",
+      "sharpe": "1.31",
+      "avg_cash": "52.24%",
+      "avg_top_weight": "26.99%",
+      "avg_tactical_active_count": "2.17",
+      "rebalance_days": 343,
+      "first_return_date": "2022-01-04",
+      "latest_return_date": "2026-04-29",
+      "observations": 1083
+    },
+    {
+      "overlay": "top5",
+      "mode": "dynamic_score",
+      "cagr": "48.92%",
+      "max_drawdown": "-33.96%",
+      "total_return": "457.61%",
+      "sharpe": "1.33",
+      "avg_cash": "52.40%",
+      "avg_top_weight": "28.35%",
+      "avg_tactical_active_count": "2.17",
+      "rebalance_days": 642,
+      "first_return_date": "2022-01-04",
+      "latest_return_date": "2026-04-29",
+      "observations": 1083
+    },
+    {
+      "overlay": "top5",
+      "mode": "dynamic_sqrt_score",
+      "cagr": "47.38%",
+      "max_drawdown": "-33.14%",
+      "total_return": "433.14%",
+      "sharpe": "1.36",
+      "avg_cash": "52.31%",
+      "avg_top_weight": "24.79%",
+      "avg_tactical_active_count": "2.17",
+      "rebalance_days": 629,
+      "first_return_date": "2022-01-04",
+      "latest_return_date": "2026-04-29",
+      "observations": 1083
+    }
+  ],
+  "calendar_years": [
+    {
+      "overlay": "none",
+      "mode": "static_score",
+      "year": 2022,
+      "return": "-29.37%",
+      "max_drawdown": "-26.31%",
+      "sharpe": "-2.00"
+    },
+    {
+      "overlay": "none",
+      "mode": "static_score",
+      "year": 2023,
+      "return": "95.30%",
+      "max_drawdown": "-18.09%",
+      "sharpe": "2.03"
+    },
+    {
+      "overlay": "none",
+      "mode": "static_score",
+      "year": 2024,
+      "return": "175.26%",
+      "max_drawdown": "-31.22%",
+      "sharpe": "2.25"
+    },
+    {
+      "overlay": "none",
+      "mode": "static_score",
+      "year": 2025,
+      "return": "20.92%",
+      "max_drawdown": "-28.65%",
+      "sharpe": "0.71"
+    },
+    {
+      "overlay": "none",
+      "mode": "static_score",
+      "year": 2026,
+      "return": "-0.20%",
+      "max_drawdown": "-20.55%",
+      "sharpe": "0.13"
+    },
+    {
+      "overlay": "none",
+      "mode": "dynamic_score",
+      "year": 2022,
+      "return": "-29.35%",
+      "max_drawdown": "-26.17%",
+      "sharpe": "-1.99"
+    },
+    {
+      "overlay": "none",
+      "mode": "dynamic_score",
+      "year": 2023,
+      "return": "89.59%",
+      "max_drawdown": "-19.40%",
+      "sharpe": "1.91"
+    },
+    {
+      "overlay": "none",
+      "mode": "dynamic_score",
+      "year": 2024,
+      "return": "185.81%",
+      "max_drawdown": "-32.11%",
+      "sharpe": "2.27"
+    },
+    {
+      "overlay": "none",
+      "mode": "dynamic_score",
+      "year": 2025,
+      "return": "21.81%",
+      "max_drawdown": "-27.61%",
+      "sharpe": "0.73"
+    },
+    {
+      "overlay": "none",
+      "mode": "dynamic_score",
+      "year": 2026,
+      "return": "4.65%",
+      "max_drawdown": "-18.32%",
+      "sharpe": "0.63"
+    },
+    {
+      "overlay": "none",
+      "mode": "dynamic_sqrt_score",
+      "year": 2022,
+      "return": "-28.64%",
+      "max_drawdown": "-25.46%",
+      "sharpe": "-1.97"
+    },
+    {
+      "overlay": "none",
+      "mode": "dynamic_sqrt_score",
+      "year": 2023,
+      "return": "86.60%",
+      "max_drawdown": "-18.72%",
+      "sharpe": "1.92"
+    },
+    {
+      "overlay": "none",
+      "mode": "dynamic_sqrt_score",
+      "year": 2024,
+      "return": "175.52%",
+      "max_drawdown": "-30.99%",
+      "sharpe": "2.31"
+    },
+    {
+      "overlay": "none",
+      "mode": "dynamic_sqrt_score",
+      "year": 2025,
+      "return": "21.92%",
+      "max_drawdown": "-27.24%",
+      "sharpe": "0.75"
+    },
+    {
+      "overlay": "none",
+      "mode": "dynamic_sqrt_score",
+      "year": 2026,
+      "return": "3.54%",
+      "max_drawdown": "-18.85%",
+      "sharpe": "0.52"
+    },
+    {
+      "overlay": "top2",
+      "mode": "static_score",
+      "year": 2022,
+      "return": "-0.59%",
+      "max_drawdown": "-2.17%",
+      "sharpe": "-0.25"
+    },
+    {
+      "overlay": "top2",
+      "mode": "static_score",
+      "year": 2023,
+      "return": "70.04%",
+      "max_drawdown": "-16.83%",
+      "sharpe": "1.68"
+    },
+    {
+      "overlay": "top2",
+      "mode": "static_score",
+      "year": 2024,
+      "return": "80.48%",
+      "max_drawdown": "-35.18%",
+      "sharpe": "1.43"
+    },
+    {
+      "overlay": "top2",
+      "mode": "static_score",
+      "year": 2025,
+      "return": "21.07%",
+      "max_drawdown": "-23.90%",
+      "sharpe": "0.77"
+    },
+    {
+      "overlay": "top2",
+      "mode": "static_score",
+      "year": 2026,
+      "return": "5.77%",
+      "max_drawdown": "-16.11%",
+      "sharpe": "0.80"
+    },
+    {
+      "overlay": "top2",
+      "mode": "dynamic_score",
+      "year": 2022,
+      "return": "-0.59%",
+      "max_drawdown": "-2.17%",
+      "sharpe": "-0.25"
+    },
+    {
+      "overlay": "top2",
+      "mode": "dynamic_score",
+      "year": 2023,
+      "return": "66.50%",
+      "max_drawdown": "-16.68%",
+      "sharpe": "1.63"
+    },
+    {
+      "overlay": "top2",
+      "mode": "dynamic_score",
+      "year": 2024,
+      "return": "87.37%",
+      "max_drawdown": "-34.98%",
+      "sharpe": "1.49"
+    },
+    {
+      "overlay": "top2",
+      "mode": "dynamic_score",
+      "year": 2025,
+      "return": "23.29%",
+      "max_drawdown": "-24.24%",
+      "sharpe": "0.82"
+    },
+    {
+      "overlay": "top2",
+      "mode": "dynamic_score",
+      "year": 2026,
+      "return": "5.77%",
+      "max_drawdown": "-16.11%",
+      "sharpe": "0.80"
+    },
+    {
+      "overlay": "top2",
+      "mode": "dynamic_sqrt_score",
+      "year": 2022,
+      "return": "-0.59%",
+      "max_drawdown": "-2.17%",
+      "sharpe": "-0.25"
+    },
+    {
+      "overlay": "top2",
+      "mode": "dynamic_sqrt_score",
+      "year": 2023,
+      "return": "58.54%",
+      "max_drawdown": "-17.95%",
+      "sharpe": "1.53"
+    },
+    {
+      "overlay": "top2",
+      "mode": "dynamic_sqrt_score",
+      "year": 2024,
+      "return": "87.18%",
+      "max_drawdown": "-35.19%",
+      "sharpe": "1.52"
+    },
+    {
+      "overlay": "top2",
+      "mode": "dynamic_sqrt_score",
+      "year": 2025,
+      "return": "25.89%",
+      "max_drawdown": "-23.72%",
+      "sharpe": "0.90"
+    },
+    {
+      "overlay": "top2",
+      "mode": "dynamic_sqrt_score",
+      "year": 2026,
+      "return": "5.63%",
+      "max_drawdown": "-16.11%",
+      "sharpe": "0.79"
+    },
+    {
+      "overlay": "top3",
+      "mode": "static_score",
+      "year": 2022,
+      "return": "-0.59%",
+      "max_drawdown": "-2.17%",
+      "sharpe": "-0.25"
+    },
+    {
+      "overlay": "top3",
+      "mode": "static_score",
+      "year": 2023,
+      "return": "83.93%",
+      "max_drawdown": "-17.18%",
+      "sharpe": "1.96"
+    },
+    {
+      "overlay": "top3",
+      "mode": "static_score",
+      "year": 2024,
+      "return": "164.84%",
+      "max_drawdown": "-29.68%",
+      "sharpe": "2.13"
+    },
+    {
+      "overlay": "top3",
+      "mode": "static_score",
+      "year": 2025,
+      "return": "20.54%",
+      "max_drawdown": "-25.47%",
+      "sharpe": "0.77"
+    },
+    {
+      "overlay": "top3",
+      "mode": "static_score",
+      "year": 2026,
+      "return": "4.48%",
+      "max_drawdown": "-15.52%",
+      "sharpe": "0.65"
+    },
+    {
+      "overlay": "top3",
+      "mode": "dynamic_score",
+      "year": 2022,
+      "return": "-0.59%",
+      "max_drawdown": "-2.17%",
+      "sharpe": "-0.25"
+    },
+    {
+      "overlay": "top3",
+      "mode": "dynamic_score",
+      "year": 2023,
+      "return": "81.47%",
+      "max_drawdown": "-16.80%",
+      "sharpe": "1.93"
+    },
+    {
+      "overlay": "top3",
+      "mode": "dynamic_score",
+      "year": 2024,
+      "return": "166.10%",
+      "max_drawdown": "-30.28%",
+      "sharpe": "2.12"
+    },
+    {
+      "overlay": "top3",
+      "mode": "dynamic_score",
+      "year": 2025,
+      "return": "25.75%",
+      "max_drawdown": "-24.14%",
+      "sharpe": "0.90"
+    },
+    {
+      "overlay": "top3",
+      "mode": "dynamic_score",
+      "year": 2026,
+      "return": "5.14%",
+      "max_drawdown": "-15.52%",
+      "sharpe": "0.73"
+    },
+    {
+      "overlay": "top3",
+      "mode": "dynamic_sqrt_score",
+      "year": 2022,
+      "return": "-0.59%",
+      "max_drawdown": "-2.17%",
+      "sharpe": "-0.25"
+    },
+    {
+      "overlay": "top3",
+      "mode": "dynamic_sqrt_score",
+      "year": 2023,
+      "return": "76.02%",
+      "max_drawdown": "-17.73%",
+      "sharpe": "1.90"
+    },
+    {
+      "overlay": "top3",
+      "mode": "dynamic_sqrt_score",
+      "year": 2024,
+      "return": "165.09%",
+      "max_drawdown": "-29.13%",
+      "sharpe": "2.19"
+    },
+    {
+      "overlay": "top3",
+      "mode": "dynamic_sqrt_score",
+      "year": 2025,
+      "return": "26.33%",
+      "max_drawdown": "-23.18%",
+      "sharpe": "0.94"
+    },
+    {
+      "overlay": "top3",
+      "mode": "dynamic_sqrt_score",
+      "year": 2026,
+      "return": "5.14%",
+      "max_drawdown": "-15.52%",
+      "sharpe": "0.74"
+    },
+    {
+      "overlay": "top4",
+      "mode": "static_score",
+      "year": 2022,
+      "return": "-0.59%",
+      "max_drawdown": "-2.17%",
+      "sharpe": "-0.25"
+    },
+    {
+      "overlay": "top4",
+      "mode": "static_score",
+      "year": 2023,
+      "return": "81.91%",
+      "max_drawdown": "-15.35%",
+      "sharpe": "1.92"
+    },
+    {
+      "overlay": "top4",
+      "mode": "static_score",
+      "year": 2024,
+      "return": "175.25%",
+      "max_drawdown": "-28.09%",
+      "sharpe": "2.24"
+    },
+    {
+      "overlay": "top4",
+      "mode": "static_score",
+      "year": 2025,
+      "return": "10.88%",
+      "max_drawdown": "-30.02%",
+      "sharpe": "0.49"
+    },
+    {
+      "overlay": "top4",
+      "mode": "static_score",
+      "year": 2026,
+      "return": "-0.12%",
+      "max_drawdown": "-16.02%",
+      "sharpe": "0.12"
+    },
+    {
+      "overlay": "top4",
+      "mode": "dynamic_score",
+      "year": 2022,
+      "return": "-0.59%",
+      "max_drawdown": "-2.17%",
+      "sharpe": "-0.25"
+    },
+    {
+      "overlay": "top4",
+      "mode": "dynamic_score",
+      "year": 2023,
+      "return": "78.09%",
+      "max_drawdown": "-15.22%",
+      "sharpe": "1.86"
+    },
+    {
+      "overlay": "top4",
+      "mode": "dynamic_score",
+      "year": 2024,
+      "return": "176.74%",
+      "max_drawdown": "-29.22%",
+      "sharpe": "2.22"
+    },
+    {
+      "overlay": "top4",
+      "mode": "dynamic_score",
+      "year": 2025,
+      "return": "18.86%",
+      "max_drawdown": "-27.16%",
+      "sharpe": "0.71"
+    },
+    {
+      "overlay": "top4",
+      "mode": "dynamic_score",
+      "year": 2026,
+      "return": "2.19%",
+      "max_drawdown": "-16.02%",
+      "sharpe": "0.39"
+    },
+    {
+      "overlay": "top4",
+      "mode": "dynamic_sqrt_score",
+      "year": 2022,
+      "return": "-0.59%",
+      "max_drawdown": "-2.17%",
+      "sharpe": "-0.25"
+    },
+    {
+      "overlay": "top4",
+      "mode": "dynamic_sqrt_score",
+      "year": 2023,
+      "return": "74.00%",
+      "max_drawdown": "-15.99%",
+      "sharpe": "1.87"
+    },
+    {
+      "overlay": "top4",
+      "mode": "dynamic_sqrt_score",
+      "year": 2024,
+      "return": "169.29%",
+      "max_drawdown": "-27.89%",
+      "sharpe": "2.27"
+    },
+    {
+      "overlay": "top4",
+      "mode": "dynamic_sqrt_score",
+      "year": 2025,
+      "return": "19.33%",
+      "max_drawdown": "-25.56%",
+      "sharpe": "0.74"
+    },
+    {
+      "overlay": "top4",
+      "mode": "dynamic_sqrt_score",
+      "year": 2026,
+      "return": "2.22%",
+      "max_drawdown": "-16.02%",
+      "sharpe": "0.39"
+    },
+    {
+      "overlay": "top5",
+      "mode": "static_score",
+      "year": 2022,
+      "return": "-0.59%",
+      "max_drawdown": "-2.17%",
+      "sharpe": "-0.25"
+    },
+    {
+      "overlay": "top5",
+      "mode": "static_score",
+      "year": 2023,
+      "return": "89.65%",
+      "max_drawdown": "-15.98%",
+      "sharpe": "2.07"
+    },
+    {
+      "overlay": "top5",
+      "mode": "static_score",
+      "year": 2024,
+      "return": "145.43%",
+      "max_drawdown": "-29.91%",
+      "sharpe": "2.03"
+    },
+    {
+      "overlay": "top5",
+      "mode": "static_score",
+      "year": 2025,
+      "return": "12.76%",
+      "max_drawdown": "-30.92%",
+      "sharpe": "0.53"
+    },
+    {
+      "overlay": "top5",
+      "mode": "static_score",
+      "year": 2026,
+      "return": "1.48%",
+      "max_drawdown": "-16.02%",
+      "sharpe": "0.30"
+    },
+    {
+      "overlay": "top5",
+      "mode": "dynamic_score",
+      "year": 2022,
+      "return": "-0.59%",
+      "max_drawdown": "-2.17%",
+      "sharpe": "-0.25"
+    },
+    {
+      "overlay": "top5",
+      "mode": "dynamic_score",
+      "year": 2023,
+      "return": "82.02%",
+      "max_drawdown": "-15.65%",
+      "sharpe": "1.94"
+    },
+    {
+      "overlay": "top5",
+      "mode": "dynamic_score",
+      "year": 2024,
+      "return": "156.03%",
+      "max_drawdown": "-31.05%",
+      "sharpe": "2.08"
+    },
+    {
+      "overlay": "top5",
+      "mode": "dynamic_score",
+      "year": 2025,
+      "return": "16.80%",
+      "max_drawdown": "-29.72%",
+      "sharpe": "0.64"
+    },
+    {
+      "overlay": "top5",
+      "mode": "dynamic_score",
+      "year": 2026,
+      "return": "3.05%",
+      "max_drawdown": "-16.02%",
+      "sharpe": "0.49"
+    },
+    {
+      "overlay": "top5",
+      "mode": "dynamic_sqrt_score",
+      "year": 2022,
+      "return": "-0.59%",
+      "max_drawdown": "-2.17%",
+      "sharpe": "-0.25"
+    },
+    {
+      "overlay": "top5",
+      "mode": "dynamic_sqrt_score",
+      "year": 2023,
+      "return": "78.45%",
+      "max_drawdown": "-15.34%",
+      "sharpe": "1.98"
+    },
+    {
+      "overlay": "top5",
+      "mode": "dynamic_sqrt_score",
+      "year": 2024,
+      "return": "150.06%",
+      "max_drawdown": "-29.81%",
+      "sharpe": "2.13"
+    },
+    {
+      "overlay": "top5",
+      "mode": "dynamic_sqrt_score",
+      "year": 2025,
+      "return": "16.61%",
+      "max_drawdown": "-28.17%",
+      "sharpe": "0.65"
+    },
+    {
+      "overlay": "top5",
+      "mode": "dynamic_sqrt_score",
+      "year": 2026,
+      "return": "3.06%",
+      "max_drawdown": "-16.02%",
+      "sharpe": "0.49"
+    }
+  ],
+  "leaders": [
+    {
+      "overlay": "none",
+      "mode": "static_score",
+      "leader": "NVDA",
+      "days": 557,
+      "share": "72.72%"
+    },
+    {
+      "overlay": "none",
+      "mode": "static_score",
+      "leader": "GOOGL",
+      "days": 104,
+      "share": "13.58%"
+    },
+    {
+      "overlay": "none",
+      "mode": "static_score",
+      "leader": "TSLA",
+      "days": 47,
+      "share": "6.14%"
+    },
+    {
+      "overlay": "none",
+      "mode": "static_score",
+      "leader": "META",
+      "days": 39,
+      "share": "5.09%"
+    },
+    {
+      "overlay": "none",
+      "mode": "static_score",
+      "leader": "MSFT",
+      "days": 9,
+      "share": "1.17%"
+    },
+    {
+      "overlay": "none",
+      "mode": "static_score",
+      "leader": "AAPL",
+      "days": 7,
+      "share": "0.91%"
+    },
+    {
+      "overlay": "none",
+      "mode": "static_score",
+      "leader": "AMZN",
+      "days": 3,
+      "share": "0.39%"
+    },
+    {
+      "overlay": "none",
+      "mode": "dynamic_score",
+      "leader": "NVDA",
+      "days": 550,
+      "share": "71.80%"
+    },
+    {
+      "overlay": "none",
+      "mode": "dynamic_score",
+      "leader": "GOOGL",
+      "days": 80,
+      "share": "10.44%"
+    },
+    {
+      "overlay": "none",
+      "mode": "dynamic_score",
+      "leader": "TSLA",
+      "days": 61,
+      "share": "7.96%"
+    },
+    {
+      "overlay": "none",
+      "mode": "dynamic_score",
+      "leader": "META",
+      "days": 52,
+      "share": "6.79%"
+    },
+    {
+      "overlay": "none",
+      "mode": "dynamic_score",
+      "leader": "AAPL",
+      "days": 11,
+      "share": "1.44%"
+    },
+    {
+      "overlay": "none",
+      "mode": "dynamic_score",
+      "leader": "MSFT",
+      "days": 9,
+      "share": "1.17%"
+    },
+    {
+      "overlay": "none",
+      "mode": "dynamic_score",
+      "leader": "AMZN",
+      "days": 3,
+      "share": "0.39%"
+    },
+    {
+      "overlay": "none",
+      "mode": "dynamic_sqrt_score",
+      "leader": "NVDA",
+      "days": 496,
+      "share": "64.75%"
+    },
+    {
+      "overlay": "none",
+      "mode": "dynamic_sqrt_score",
+      "leader": "GOOGL",
+      "days": 106,
+      "share": "13.84%"
+    },
+    {
+      "overlay": "none",
+      "mode": "dynamic_sqrt_score",
+      "leader": "TSLA",
+      "days": 87,
+      "share": "11.36%"
+    },
+    {
+      "overlay": "none",
+      "mode": "dynamic_sqrt_score",
+      "leader": "META",
+      "days": 54,
+      "share": "7.05%"
+    },
+    {
+      "overlay": "none",
+      "mode": "dynamic_sqrt_score",
+      "leader": "AAPL",
+      "days": 11,
+      "share": "1.44%"
+    },
+    {
+      "overlay": "none",
+      "mode": "dynamic_sqrt_score",
+      "leader": "MSFT",
+      "days": 9,
+      "share": "1.17%"
+    },
+    {
+      "overlay": "none",
+      "mode": "dynamic_sqrt_score",
+      "leader": "AMZN",
+      "days": 3,
+      "share": "0.39%"
+    },
+    {
+      "overlay": "top2",
+      "mode": "static_score",
+      "leader": "NVDA",
+      "days": 415,
+      "share": "56.85%"
+    },
+    {
+      "overlay": "top2",
+      "mode": "static_score",
+      "leader": "GOOGL",
+      "days": 138,
+      "share": "18.90%"
+    },
+    {
+      "overlay": "top2",
+      "mode": "static_score",
+      "leader": "TSLA",
+      "days": 79,
+      "share": "10.82%"
+    },
+    {
+      "overlay": "top2",
+      "mode": "static_score",
+      "leader": "META",
+      "days": 62,
+      "share": "8.49%"
+    },
+    {
+      "overlay": "top2",
+      "mode": "static_score",
+      "leader": "MSFT",
+      "days": 22,
+      "share": "3.01%"
+    },
+    {
+      "overlay": "top2",
+      "mode": "static_score",
+      "leader": "AAPL",
+      "days": 11,
+      "share": "1.51%"
+    },
+    {
+      "overlay": "top2",
+      "mode": "static_score",
+      "leader": "AMZN",
+      "days": 3,
+      "share": "0.41%"
+    },
+    {
+      "overlay": "top2",
+      "mode": "dynamic_score",
+      "leader": "NVDA",
+      "days": 413,
+      "share": "56.58%"
+    },
+    {
+      "overlay": "top2",
+      "mode": "dynamic_score",
+      "leader": "GOOGL",
+      "days": 117,
+      "share": "16.03%"
+    },
+    {
+      "overlay": "top2",
+      "mode": "dynamic_score",
+      "leader": "TSLA",
+      "days": 102,
+      "share": "13.97%"
+    },
+    {
+      "overlay": "top2",
+      "mode": "dynamic_score",
+      "leader": "META",
+      "days": 62,
+      "share": "8.49%"
+    },
+    {
+      "overlay": "top2",
+      "mode": "dynamic_score",
+      "leader": "MSFT",
+      "days": 23,
+      "share": "3.15%"
+    },
+    {
+      "overlay": "top2",
+      "mode": "dynamic_score",
+      "leader": "AAPL",
+      "days": 11,
+      "share": "1.51%"
+    },
+    {
+      "overlay": "top2",
+      "mode": "dynamic_score",
+      "leader": "AMZN",
+      "days": 2,
+      "share": "0.27%"
+    },
+    {
+      "overlay": "top2",
+      "mode": "dynamic_sqrt_score",
+      "leader": "NVDA",
+      "days": 412,
+      "share": "56.44%"
+    },
+    {
+      "overlay": "top2",
+      "mode": "dynamic_sqrt_score",
+      "leader": "GOOGL",
+      "days": 118,
+      "share": "16.16%"
+    },
+    {
+      "overlay": "top2",
+      "mode": "dynamic_sqrt_score",
+      "leader": "TSLA",
+      "days": 101,
+      "share": "13.84%"
+    },
+    {
+      "overlay": "top2",
+      "mode": "dynamic_sqrt_score",
+      "leader": "META",
+      "days": 63,
+      "share": "8.63%"
+    },
+    {
+      "overlay": "top2",
+      "mode": "dynamic_sqrt_score",
+      "leader": "MSFT",
+      "days": 23,
+      "share": "3.15%"
+    },
+    {
+      "overlay": "top2",
+      "mode": "dynamic_sqrt_score",
+      "leader": "AAPL",
+      "days": 11,
+      "share": "1.51%"
+    },
+    {
+      "overlay": "top2",
+      "mode": "dynamic_sqrt_score",
+      "leader": "AMZN",
+      "days": 2,
+      "share": "0.27%"
+    },
+    {
+      "overlay": "top3",
+      "mode": "static_score",
+      "leader": "NVDA",
+      "days": 477,
+      "share": "64.90%"
+    },
+    {
+      "overlay": "top3",
+      "mode": "static_score",
+      "leader": "GOOGL",
+      "days": 128,
+      "share": "17.41%"
+    },
+    {
+      "overlay": "top3",
+      "mode": "static_score",
+      "leader": "TSLA",
+      "days": 51,
+      "share": "6.94%"
+    },
+    {
+      "overlay": "top3",
+      "mode": "static_score",
+      "leader": "META",
+      "days": 46,
+      "share": "6.26%"
+    },
+    {
+      "overlay": "top3",
+      "mode": "static_score",
+      "leader": "MSFT",
+      "days": 19,
+      "share": "2.59%"
+    },
+    {
+      "overlay": "top3",
+      "mode": "static_score",
+      "leader": "AAPL",
+      "days": 12,
+      "share": "1.63%"
+    },
+    {
+      "overlay": "top3",
+      "mode": "static_score",
+      "leader": "AMZN",
+      "days": 2,
+      "share": "0.27%"
+    },
+    {
+      "overlay": "top3",
+      "mode": "dynamic_score",
+      "leader": "NVDA",
+      "days": 471,
+      "share": "64.08%"
+    },
+    {
+      "overlay": "top3",
+      "mode": "dynamic_score",
+      "leader": "GOOGL",
+      "days": 100,
+      "share": "13.61%"
+    },
+    {
+      "overlay": "top3",
+      "mode": "dynamic_score",
+      "leader": "TSLA",
+      "days": 82,
+      "share": "11.16%"
+    },
+    {
+      "overlay": "top3",
+      "mode": "dynamic_score",
+      "leader": "META",
+      "days": 48,
+      "share": "6.53%"
+    },
+    {
+      "overlay": "top3",
+      "mode": "dynamic_score",
+      "leader": "MSFT",
+      "days": 19,
+      "share": "2.59%"
+    },
+    {
+      "overlay": "top3",
+      "mode": "dynamic_score",
+      "leader": "AAPL",
+      "days": 13,
+      "share": "1.77%"
+    },
+    {
+      "overlay": "top3",
+      "mode": "dynamic_score",
+      "leader": "AMZN",
+      "days": 2,
+      "share": "0.27%"
+    },
+    {
+      "overlay": "top3",
+      "mode": "dynamic_sqrt_score",
+      "leader": "NVDA",
+      "days": 457,
+      "share": "62.18%"
+    },
+    {
+      "overlay": "top3",
+      "mode": "dynamic_sqrt_score",
+      "leader": "GOOGL",
+      "days": 108,
+      "share": "14.69%"
+    },
+    {
+      "overlay": "top3",
+      "mode": "dynamic_sqrt_score",
+      "leader": "TSLA",
+      "days": 86,
+      "share": "11.70%"
+    },
+    {
+      "overlay": "top3",
+      "mode": "dynamic_sqrt_score",
+      "leader": "META",
+      "days": 50,
+      "share": "6.80%"
+    },
+    {
+      "overlay": "top3",
+      "mode": "dynamic_sqrt_score",
+      "leader": "MSFT",
+      "days": 19,
+      "share": "2.59%"
+    },
+    {
+      "overlay": "top3",
+      "mode": "dynamic_sqrt_score",
+      "leader": "AAPL",
+      "days": 13,
+      "share": "1.77%"
+    },
+    {
+      "overlay": "top3",
+      "mode": "dynamic_sqrt_score",
+      "leader": "AMZN",
+      "days": 2,
+      "share": "0.27%"
+    },
+    {
+      "overlay": "top4",
+      "mode": "static_score",
+      "leader": "NVDA",
+      "days": 508,
+      "share": "69.02%"
+    },
+    {
+      "overlay": "top4",
+      "mode": "static_score",
+      "leader": "GOOGL",
+      "days": 121,
+      "share": "16.44%"
+    },
+    {
+      "overlay": "top4",
+      "mode": "static_score",
+      "leader": "TSLA",
+      "days": 39,
+      "share": "5.30%"
+    },
+    {
+      "overlay": "top4",
+      "mode": "static_score",
+      "leader": "META",
+      "days": 37,
+      "share": "5.03%"
+    },
+    {
+      "overlay": "top4",
+      "mode": "static_score",
+      "leader": "MSFT",
+      "days": 19,
+      "share": "2.58%"
+    },
+    {
+      "overlay": "top4",
+      "mode": "static_score",
+      "leader": "AAPL",
+      "days": 10,
+      "share": "1.36%"
+    },
+    {
+      "overlay": "top4",
+      "mode": "static_score",
+      "leader": "AMZN",
+      "days": 2,
+      "share": "0.27%"
+    },
+    {
+      "overlay": "top4",
+      "mode": "dynamic_score",
+      "leader": "NVDA",
+      "days": 502,
+      "share": "68.21%"
+    },
+    {
+      "overlay": "top4",
+      "mode": "dynamic_score",
+      "leader": "GOOGL",
+      "days": 87,
+      "share": "11.82%"
+    },
+    {
+      "overlay": "top4",
+      "mode": "dynamic_score",
+      "leader": "TSLA",
+      "days": 72,
+      "share": "9.78%"
+    },
+    {
+      "overlay": "top4",
+      "mode": "dynamic_score",
+      "leader": "META",
+      "days": 41,
+      "share": "5.57%"
+    },
+    {
+      "overlay": "top4",
+      "mode": "dynamic_score",
+      "leader": "MSFT",
+      "days": 19,
+      "share": "2.58%"
+    },
+    {
+      "overlay": "top4",
+      "mode": "dynamic_score",
+      "leader": "AAPL",
+      "days": 13,
+      "share": "1.77%"
+    },
+    {
+      "overlay": "top4",
+      "mode": "dynamic_score",
+      "leader": "AMZN",
+      "days": 2,
+      "share": "0.27%"
+    },
+    {
+      "overlay": "top4",
+      "mode": "dynamic_sqrt_score",
+      "leader": "NVDA",
+      "days": 471,
+      "share": "63.99%"
+    },
+    {
+      "overlay": "top4",
+      "mode": "dynamic_sqrt_score",
+      "leader": "GOOGL",
+      "days": 107,
+      "share": "14.54%"
+    },
+    {
+      "overlay": "top4",
+      "mode": "dynamic_sqrt_score",
+      "leader": "TSLA",
+      "days": 81,
+      "share": "11.01%"
+    },
+    {
+      "overlay": "top4",
+      "mode": "dynamic_sqrt_score",
+      "leader": "META",
+      "days": 43,
+      "share": "5.84%"
+    },
+    {
+      "overlay": "top4",
+      "mode": "dynamic_sqrt_score",
+      "leader": "MSFT",
+      "days": 19,
+      "share": "2.58%"
+    },
+    {
+      "overlay": "top4",
+      "mode": "dynamic_sqrt_score",
+      "leader": "AAPL",
+      "days": 13,
+      "share": "1.77%"
+    },
+    {
+      "overlay": "top4",
+      "mode": "dynamic_sqrt_score",
+      "leader": "AMZN",
+      "days": 2,
+      "share": "0.27%"
+    },
+    {
+      "overlay": "top5",
+      "mode": "static_score",
+      "leader": "NVDA",
+      "days": 528,
+      "share": "71.74%"
+    },
+    {
+      "overlay": "top5",
+      "mode": "static_score",
+      "leader": "GOOGL",
+      "days": 112,
+      "share": "15.22%"
+    },
+    {
+      "overlay": "top5",
+      "mode": "static_score",
+      "leader": "TSLA",
+      "days": 37,
+      "share": "5.03%"
+    },
+    {
+      "overlay": "top5",
+      "mode": "static_score",
+      "leader": "META",
+      "days": 28,
+      "share": "3.80%"
+    },
+    {
+      "overlay": "top5",
+      "mode": "static_score",
+      "leader": "MSFT",
+      "days": 19,
+      "share": "2.58%"
+    },
+    {
+      "overlay": "top5",
+      "mode": "static_score",
+      "leader": "AAPL",
+      "days": 10,
+      "share": "1.36%"
+    },
+    {
+      "overlay": "top5",
+      "mode": "static_score",
+      "leader": "AMZN",
+      "days": 2,
+      "share": "0.27%"
+    },
+    {
+      "overlay": "top5",
+      "mode": "dynamic_score",
+      "leader": "NVDA",
+      "days": 522,
+      "share": "70.92%"
+    },
+    {
+      "overlay": "top5",
+      "mode": "dynamic_score",
+      "leader": "GOOGL",
+      "days": 80,
+      "share": "10.87%"
+    },
+    {
+      "overlay": "top5",
+      "mode": "dynamic_score",
+      "leader": "TSLA",
+      "days": 65,
+      "share": "8.83%"
+    },
+    {
+      "overlay": "top5",
+      "mode": "dynamic_score",
+      "leader": "META",
+      "days": 37,
+      "share": "5.03%"
+    },
+    {
+      "overlay": "top5",
+      "mode": "dynamic_score",
+      "leader": "MSFT",
+      "days": 19,
+      "share": "2.58%"
+    },
+    {
+      "overlay": "top5",
+      "mode": "dynamic_score",
+      "leader": "AAPL",
+      "days": 11,
+      "share": "1.49%"
+    },
+    {
+      "overlay": "top5",
+      "mode": "dynamic_score",
+      "leader": "AMZN",
+      "days": 2,
+      "share": "0.27%"
+    },
+    {
+      "overlay": "top5",
+      "mode": "dynamic_sqrt_score",
+      "leader": "NVDA",
+      "days": 478,
+      "share": "64.95%"
+    },
+    {
+      "overlay": "top5",
+      "mode": "dynamic_sqrt_score",
+      "leader": "GOOGL",
+      "days": 106,
+      "share": "14.40%"
+    },
+    {
+      "overlay": "top5",
+      "mode": "dynamic_sqrt_score",
+      "leader": "TSLA",
+      "days": 81,
+      "share": "11.01%"
+    },
+    {
+      "overlay": "top5",
+      "mode": "dynamic_sqrt_score",
+      "leader": "META",
+      "days": 39,
+      "share": "5.30%"
+    },
+    {
+      "overlay": "top5",
+      "mode": "dynamic_sqrt_score",
+      "leader": "MSFT",
+      "days": 19,
+      "share": "2.58%"
+    },
+    {
+      "overlay": "top5",
+      "mode": "dynamic_sqrt_score",
+      "leader": "AAPL",
+      "days": 11,
+      "share": "1.49%"
+    },
+    {
+      "overlay": "top5",
+      "mode": "dynamic_sqrt_score",
+      "leader": "AMZN",
+      "days": 2,
+      "share": "0.27%"
+    }
+  ],
+  "average_weights": [
+    {
+      "symbol": "NVDL",
+      "none": "15.40%",
+      "top2": "16.34%",
+      "top3": "16.19%",
+      "top4": "15.99%",
+      "top5": "15.81%"
+    },
+    {
+      "symbol": "FBL",
+      "none": "7.97%",
+      "top2": "7.44%",
+      "top3": "7.75%",
+      "top4": "7.36%",
+      "top5": "7.16%"
+    },
+    {
+      "symbol": "NVDA",
+      "none": "7.28%",
+      "top2": "0.44%",
+      "top3": "0.81%",
+      "top4": "1.32%",
+      "top5": "1.63%"
+    },
+    {
+      "symbol": "GGLL",
+      "none": "7.14%",
+      "top2": "6.75%",
+      "top3": "6.72%",
+      "top4": "7.00%",
+      "top5": "7.18%"
+    },
+    {
+      "symbol": "TSLL",
+      "none": "6.14%",
+      "top2": "5.03%",
+      "top3": "5.24%",
+      "top4": "5.24%",
+      "top5": "5.34%"
+    },
+    {
+      "symbol": "AMZN",
+      "none": "3.82%",
+      "top2": "1.57%",
+      "top3": "2.52%",
+      "top4": "3.28%",
+      "top5": "3.96%"
+    },
+    {
+      "symbol": "AAPU",
+      "none": "3.37%",
+      "top2": "1.68%",
+      "top3": "2.17%",
+      "top4": "2.50%",
+      "top5": "2.60%"
+    },
+    {
+      "symbol": "TSLA",
+      "none": "2.71%",
+      "top2": "0.08%",
+      "top3": "0.08%",
+      "top4": "0.14%",
+      "top5": "0.14%"
+    },
+    {
+      "symbol": "META",
+      "none": "2.11%",
+      "top2": "0.54%",
+      "top3": "1.02%",
+      "top4": "1.39%",
+      "top5": "1.62%"
+    },
+    {
+      "symbol": "MSFU",
+      "none": "1.17%",
+      "top2": "1.55%",
+      "top3": "1.52%",
+      "top4": "1.61%",
+      "top5": "1.62%"
+    },
+    {
+      "symbol": "AMZU",
+      "none": "0.75%",
+      "top2": "0.56%",
+      "top3": "0.64%",
+      "top4": "0.66%",
+      "top5": "0.64%"
+    }
+  ]
+}

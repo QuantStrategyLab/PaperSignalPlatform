@@ -1,0 +1,15 @@
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+COPY requirements.signal-notifier.txt /app/requirements.signal-notifier.txt
+RUN python3 -m pip install --no-cache-dir --upgrade pip && \
+    python3 -m pip install --no-cache-dir -r /app/requirements.signal-notifier.txt
+
+COPY signal_notifier /app/signal_notifier
+COPY scripts /app/scripts
+
+CMD ["python3", "--version"]
