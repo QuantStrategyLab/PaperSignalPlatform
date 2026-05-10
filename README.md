@@ -1,5 +1,12 @@
 # PaperSignalPlatform
 
+[English](#english) | [中文](#中文)
+
+---
+
+<a id="english"></a>
+## English
+
 Brokerless paper-trading and signal-notification runtime for shared `us_equity`
 strategy profiles.
 
@@ -207,3 +214,105 @@ Next changes should be:
 
 1. keep new profile authoring and research evidence upstream in `UsEquityStrategies`
    and `UsEquitySnapshotPipelines`
+
+---
+
+<a id="中文"></a>
+## 中文
+
+`PaperSignalPlatform` 是共享 `us_equity` 策略 profile 的 brokerless paper-trading 和 signal-notification runtime。
+
+它是这些 live broker runtime 的兄弟仓库：
+
+- `InteractiveBrokersPlatform`
+- `CharlesSchwabPlatform`
+- `LongBridgePlatform`
+
+区别是刻意设计的：这个仓库永远不能真实下单。它只负责：
+
+- paper account 配置解析
+- paper execution contract
+- Telegram / log / artifact transport
+- 本地 operator inspection helpers
+
+策略语义放在 `UsEquityStrategies`，共享 contract 放在 `QuantPlatformKit`。
+
+## 设计规则
+
+1. 策略代码必须保持平台无关，并保留在 `UsEquityStrategies`。
+2. 本仓库不能包含 broker SDK 或真实下单器。
+3. 新策略接入必须遵循 `UsEquityStrategies` 上游的四 runtime authoring standard：同一个共享 profile 默认可移植到 `ibkr`、`schwab`、`longbridge` 和 `paper_signal`，不在本仓库创建平台本地策略 fork。
+4. Paper execution、notification 和 state persistence 留在本 runtime 仓库内。
+
+## 当前范围
+
+这个 scaffold 提供：
+
+- `paper_signal` platform registry 和 rollout policy
+- 从 `UsEquityStrategies` 加载共享策略
+- paper account-group config contract
+- notification / state / execution service boundaries
+- 更完整的 Telegram notification rendering 和本地 operator inspection helpers
+- 对当前支持的 direct-runtime、pure feature-snapshot、hybrid snapshot+history input modes 执行最小 paper cycle
+
+当前状态：
+
+- 共享 `paper_signal` adapters 已经存在于上游 `UsEquityStrategies`
+- 支持的 paper profiles 跟随共享 `runtime_enabled` catalog
+- 不保留平台本地策略、paper-only 策略 fork 或 brokerless notifier 策略
+- cycle 支持 `signal -> next-session pending plan -> simulated execution`
+- operator scripts 可以查看当前 paper account state，并预览本地或 GCS artifacts 中的最新通知
+- operator scripts 也可以生成 daily / weekly summary、monthly / incident review pack，以及异常状态 dashboard
+
+## Runtime 模型
+
+- `STRATEGY_PROFILE` 选择一个共享 profile
+- `PAPER_ACCOUNT_GROUP` 选择一个 paper account config
+- `PaperSignalPlatform` 加载共享 entrypoint 和 runtime adapter
+- 支持的 input modes 会构建 normalized inputs，评估共享策略，然后在本地模拟 rebalance / fills
+- 输出写到 Telegram、结构化 artifacts 和 state，永远不发送给 broker
+
+## 共享策略兼容性
+
+`PaperSignalPlatform` 遵循和三个 live broker runtimes 相同的 cross-platform strategy contract。
+
+一个策略要在这里被视为 ready，应满足：
+
+1. 在 `UsEquityStrategies` 中定义
+2. 返回标准 `StrategyDecision`
+3. 声明 canonical required inputs
+4. 在上游暴露 `paper_signal` runtime adapter
+5. 保持可移植到 `ibkr`、`schwab`、`longbridge` 和 `paper_signal`
+
+如果某个 profile 还没有上游 `paper_signal` adapter，本 runtime 应拒绝它，而不是在本仓库维护平台本地 workaround。
+
+## 环境变量
+
+| 变量 | 必填 | 说明 |
+| --- | --- | --- |
+| `STRATEGY_PROFILE` | 是 | 来自 `UsEquityStrategies` 的共享 profile 名 |
+| `PAPER_ACCOUNT_GROUP` | 是 | 选择一个 paper account group |
+| `PAPER_ACCOUNT_GROUP_CONFIG_JSON` | 是* | 内联 paper account config JSON |
+| `PAPER_ACCOUNT_GROUP_CONFIG_SECRET_NAME` | 是* | Secret Manager 形式的替代配置来源 |
+| `TELEGRAM_TOKEN` | 否 | Telegram bot token |
+| `GLOBAL_TELEGRAM_CHAT_ID` | 否 | 默认 Telegram chat id |
+| `NOTIFY_LANG` | 否 | 默认 `en` |
+| `GOOGLE_CLOUD_PROJECT` | 否 | 仅使用 Secret Manager 时需要 |
+| `PAPER_SIGNAL_STATE_STORE_BACKEND` | 否 | 默认 `local_json`；支持 `memory`、`local_json`、`firestore` |
+| `PAPER_SIGNAL_ARTIFACT_STORE_BACKEND` | 否 | 默认 `local_json`；支持 `local_json`、`gcs` |
+| `PAPER_SIGNAL_MARKET_DATA_PROVIDER` | 否 | 默认 `yfinance` |
+
+\* `PAPER_ACCOUNT_GROUP_CONFIG_JSON` 和 `PAPER_ACCOUNT_GROUP_CONFIG_SECRET_NAME` 二选一。
+
+## 下一步
+
+当前已测试的最小路径是共享上游 profile 的 input-mode route。本仓库不应拥有 profile-specific strategy code。
+
+已接线的 paper cycles 支持：
+
+1. 收盘后运行
+2. 排队 next-session paper rebalance
+3. 下一次运行时使用持久化 paper state 执行 queued rebalance
+4. 写出 reconciliation artifact 并发送一条通知
+
+后续 profile authoring 和 research evidence 应继续放在 `UsEquityStrategies` 和 `UsEquitySnapshotPipelines` 上游。
