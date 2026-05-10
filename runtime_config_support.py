@@ -10,6 +10,7 @@ from quant_platform_kit.common.runtime_config import (
     first_non_empty,
     resolve_strategy_runtime_path_settings,
 )
+from quant_platform_kit.common.runtime_target import RuntimeTarget, build_runtime_target
 from strategy_registry import PAPER_SIGNAL_PLATFORM, resolve_strategy_definition, resolve_strategy_metadata
 from us_equity_strategies import get_strategy_catalog
 
@@ -65,6 +66,7 @@ class PlatformRuntimeSettings:
     tg_token: str | None
     tg_chat_id: str | None
     notify_lang: str
+    runtime_target: RuntimeTarget | None = None
 
 
 def load_platform_runtime_settings(
@@ -172,6 +174,15 @@ def load_platform_runtime_settings(
         tg_token=first_non_empty(os.getenv("TELEGRAM_TOKEN"), os.getenv("TG_TOKEN")),
         tg_chat_id=first_non_empty(group_config.telegram_chat_id, os.getenv("GLOBAL_TELEGRAM_CHAT_ID")),
         notify_lang=(os.getenv("NOTIFY_LANG", "en").strip() or "en"),
+        runtime_target=build_runtime_target(
+            platform_id=PAPER_SIGNAL_PLATFORM,
+            strategy_profile=runtime_paths.strategy_profile,
+            dry_run_only=True,
+            deployment_selector=paper_account_group,
+            account_selector=group_config.account_alias,
+            account_scope=paper_account_group,
+            service_name=group_config.service_name,
+        ),
     )
 
 

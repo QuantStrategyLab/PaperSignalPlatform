@@ -35,11 +35,11 @@ class FakeListStorageClient:
 
 def test_format_paper_account_state_renders_zh_summary():
     state = PaperAccountState(
-        paper_account_group="sg_coin_notify",
+        paper_account_group="sg_alpha",
         cash=1250.0,
         nav=104500.0,
         positions={
-            "CONL": {
+            "SPY": {
                 "quantity": 12.5,
                 "average_cost": 34.2,
             }
@@ -47,18 +47,18 @@ def test_format_paper_account_state_renders_zh_summary():
         metadata={
             "pending_plan": {"effective_date": "2026-04-23"},
             "last_run_as_of": "2026-04-22",
-            "last_strategy_profile": "coin_short_hold_vt50",
+            "last_strategy_profile": "global_etf_rotation",
         },
     )
 
     text = format_paper_account_state(state, lang="zh-CN")
 
-    assert "账户组: sg_coin_notify" in text
+    assert "账户组: sg_alpha" in text
     assert "净值: $104,500.00" in text
     assert "待执行生效日: 2026-04-23" in text
     assert "当前持仓" in text
-    assert "- CONL: 数量=12.5000, 成本=$34.20" in text
-    assert "- last_strategy_profile: coin_short_hold_vt50" in text
+    assert "- SPY: 数量=12.5000, 成本=$34.20" in text
+    assert "- last_strategy_profile: global_etf_rotation" in text
 
 
 def test_load_latest_local_reconciliation_record_applies_filters(tmp_path):

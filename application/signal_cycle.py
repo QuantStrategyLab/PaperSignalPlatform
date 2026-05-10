@@ -108,6 +108,7 @@ def run_paper_signal_cycle(
     pending_plan, queue_status = _queue_pending_plan(
         state=state,
         as_of_session=as_of_session,
+        market_calendar=settings.market_calendar,
         allocation_payload=allocation_payload,
         decision_metadata=decision_metadata,
     )
@@ -506,6 +507,7 @@ def _queue_pending_plan(
     *,
     state: PaperAccountState,
     as_of_session: pd.Timestamp,
+    market_calendar: str,
     allocation_payload: Mapping[str, Any] | None,
     decision_metadata: Mapping[str, Any],
 ) -> tuple[dict[str, Any] | None, str]:
@@ -514,6 +516,10 @@ def _queue_pending_plan(
     effective_date = str(decision_metadata.get("effective_date") or "").strip()
     if not effective_date:
         return None, "missing_effective_date"
+    effective_date = _resolve_market_effective_date(
+        effective_date,
+        market_calendar=market_calendar,
+    )
     return (
         {
             "created_as_of": as_of_session.strftime("%Y-%m-%d"),
@@ -528,6 +534,28 @@ def _queue_pending_plan(
         },
         "queued_pending_plan",
     )
+
+
+def _resolve_market_effective_date(effective_date: str, *, market_calendar: str) -> str:
+    target = pd.Timestamp(effective_date).normalize()
+    calendar_name = str(market_calendar or "").strip()
+    if not calendar_name:
+        return target.strftime("%Y-%m-%d")
+    try:
+        import pandas_market_calendars as mcal
+
+        calendar = mcal.get_calendar(calendar_name)
+        schedule = calendar.schedule(
+            start_date=target.strftime("%Y-%m-%d"),
+            end_date=(target + pd.Timedelta(days=14)).strftime("%Y-%m-%d"),
+        )
+    except Exception:
+        return target.strftime("%Y-%m-%d")
+    for raw_session in schedule.index:
+        session = pd.Timestamp(raw_session).tz_localize(None).normalize()
+        if session >= target:
+            return session.strftime("%Y-%m-%d")
+    return target.strftime("%Y-%m-%d")
 
 
 def _positions_payload(portfolio_snapshot: PortfolioSnapshot) -> list[dict[str, Any]]:
