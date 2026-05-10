@@ -7,16 +7,16 @@ def test_parse_paper_account_group_configs_supports_groups_wrapper():
     payload = """
     {
       "groups": {
-        "sg_coin_notify": {
-          "service_name": "paper-signal-coin-sg",
-          "account_alias": "sg-paper-coin",
+        "sg_alpha": {
+          "service_name": "paper-signal-alpha-sg",
+          "account_alias": "sg-paper-alpha",
           "base_currency": "USD",
           "market_calendar": "XNYS",
           "starting_equity": 100000,
           "slippage_bps": 15,
           "commission_bps": 0,
           "fill_model": "next_open",
-          "artifact_bucket_prefix": "paper-signal/sg/coin"
+          "artifact_bucket_prefix": "paper-signal/sg/alpha"
         }
       }
     }
@@ -24,9 +24,9 @@ def test_parse_paper_account_group_configs_supports_groups_wrapper():
 
     groups = parse_paper_account_group_configs(payload)
 
-    group = groups["sg_coin_notify"]
-    assert group.service_name == "paper-signal-coin-sg"
-    assert group.account_alias == "sg-paper-coin"
+    group = groups["sg_alpha"]
+    assert group.service_name == "paper-signal-alpha-sg"
+    assert group.account_alias == "sg-paper-alpha"
     assert group.base_currency == "USD"
     assert group.market_calendar == "XNYS"
     assert group.starting_equity == 100000.0

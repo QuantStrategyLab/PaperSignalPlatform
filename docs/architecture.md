@@ -17,9 +17,6 @@
 - final Telegram wording and audit artifacts
 - operator summaries and review packs derived from persisted artifacts
 - incident trigger dashboards derived from persisted artifacts
-- incident action plans that reuse review-pack jobs instead of creating a second
-  review implementation path
-- isolated paper-only GCP deployment conventions
 
 ## What does not belong here
 
@@ -45,10 +42,9 @@ When adding a new strategy for this platform:
 Do not patch around missing shared adapters by adding a local strategy
 implementation in this repository.
 
-Paper-only rollout overrides are allowed when a profile stays
-`research_only` in the shared catalog but has been validated locally for this
-brokerless runtime. That override must stay local to `PaperSignalPlatform`
-instead of changing live broker rollout policy upstream.
+Paper-only rollout overrides should not carry local strategy logic. If a
+profile is not ready in the shared catalog, keep the research and validation in
+the upstream strategy and snapshot repositories before enabling it here.
 
 ## Paper execution rule
 
@@ -72,14 +68,8 @@ The first concrete paths are now wired for:
 - `feature_snapshot`
 - `feature_snapshot + market_history + benchmark_history + portfolio_snapshot`
 
-Current shared profiles covered by those routes:
-
-- `global_etf_rotation`
-- `tqqq_growth_income`
-- `soxl_soxx_trend_income`
-- `russell_1000_multi_factor_defensive`
-- `tech_communication_pullback_enhancement`
-- `mega_cap_leader_rotation_top50_balanced`
+These are input-mode routes for shared upstream profiles, not local strategy
+implementations.
 
 1. load shared entrypoint/runtime adapter
 2. fetch daily bars from a brokerless market-data provider
@@ -99,10 +89,4 @@ Durable runtime backends now supported:
 - `Firestore` for latest paper-account state
 - `GCS` for reconciliation JSON artifacts
 - `local_json` remains available for local development and tests
-- optional scheduled incident auto-open now reuses the deployed review-pack job
-  through Cloud Run Jobs API overrides, so the dashboard, review pack, and
-  auto-open path stay on one shared artifact contract
-
-When deploying with Google Cloud, use a dedicated paper-only project instead of
-sharing the same project with live broker runtimes. This repo should never need
-broker IAM roles or broker secrets.
+- local review-pack and dashboard flows reuse the same artifact contract

@@ -84,7 +84,7 @@ def test_firestore_paper_state_store_round_trip():
         collection_name="paper_signal_states",
     )
     state = PaperAccountState(
-        paper_account_group="sg_coin_notify",
+        paper_account_group="sg_alpha",
         cash=10123.45,
         nav=12000.0,
         positions={"SOXL": {"quantity": 10.0, "average_cost": 22.5}},
@@ -92,10 +92,10 @@ def test_firestore_paper_state_store_round_trip():
     )
 
     store.save(state)
-    loaded = store.load("sg_coin_notify")
+    loaded = store.load("sg_alpha")
 
     assert loaded is not None
-    assert loaded.paper_account_group == "sg_coin_notify"
+    assert loaded.paper_account_group == "sg_alpha"
     assert loaded.cash == 10123.45
     assert loaded.positions["SOXL"]["quantity"] == 10.0
     assert loaded.metadata["last_run_as_of"] == "2026-04-22"
@@ -106,25 +106,25 @@ def test_gcs_json_artifact_writer_writes_record():
     writer = GcsJsonArtifactWriter(
         client=client,
         bucket_name="quant-strategy-artifacts",
-        prefix="paper-signal/sg/coin",
+        prefix="paper-signal/sg/alpha",
     )
 
     writer.write_record(
         ReconciliationRecord(
             strategy_profile="soxl_soxx_trend_income",
-            paper_account_group="sg_coin_notify",
+            paper_account_group="sg_alpha",
             payload={"as_of": "2026-04-22", "nav": 100000.0},
         )
     )
 
     objects = client.buckets["quant-strategy-artifacts"]
     assert (
-        "paper-signal/sg/coin/2026-04-22/soxl_soxx_trend_income__sg_coin_notify.json"
+        "paper-signal/sg/alpha/2026-04-22/soxl_soxx_trend_income__sg_alpha.json"
         in objects
     )
     assert (
         objects[
-            "paper-signal/sg/coin/2026-04-22/soxl_soxx_trend_income__sg_coin_notify.json"
+            "paper-signal/sg/alpha/2026-04-22/soxl_soxx_trend_income__sg_alpha.json"
         ]["content_type"]
         == "application/json"
     )
@@ -137,7 +137,7 @@ def test_build_runtime_dependencies_supports_firestore_and_gcs():
         state_store_backend="firestore",
         artifact_store_backend="gcs",
         gcs_bucket="quant-strategy-artifacts",
-        artifact_bucket_prefix="paper-signal/sg/coin",
+        artifact_bucket_prefix="paper-signal/sg/alpha",
     )
 
     deps = build_runtime_dependencies(
@@ -148,23 +148,23 @@ def test_build_runtime_dependencies_supports_firestore_and_gcs():
 
     deps.state_store.save(
         PaperAccountState(
-            paper_account_group="sg_coin_notify",
+            paper_account_group="sg_alpha",
             cash=1.0,
             nav=2.0,
         )
     )
-    loaded = deps.state_store.load("sg_coin_notify")
+    loaded = deps.state_store.load("sg_alpha")
     assert loaded is not None
     assert loaded.nav == 2.0
     deps.artifact_writer.write_record(
         ReconciliationRecord(
             strategy_profile="global_etf_rotation",
-            paper_account_group="sg_coin_notify",
+            paper_account_group="sg_alpha",
             payload={"as_of": "2026-04-22"},
         )
     )
     assert (
-        "paper-signal/sg/coin/2026-04-22/global_etf_rotation__sg_coin_notify.json"
+        "paper-signal/sg/alpha/2026-04-22/global_etf_rotation__sg_alpha.json"
         in storage_client.buckets["quant-strategy-artifacts"]
     )
 
@@ -194,9 +194,9 @@ def _make_settings(**overrides) -> PlatformRuntimeSettings:
         "strategy_config_path": None,
         "strategy_config_source": None,
         "reconciliation_output_path": None,
-        "paper_account_group": "sg_coin_notify",
-        "service_name": "paper-signal-coin-sg",
-        "account_alias": "sg-paper-coin",
+        "paper_account_group": "sg_alpha",
+        "service_name": "paper-signal-alpha-sg",
+        "account_alias": "sg-paper-alpha",
         "base_currency": "USD",
         "market_calendar": "XNYS",
         "starting_equity": 100000.0,

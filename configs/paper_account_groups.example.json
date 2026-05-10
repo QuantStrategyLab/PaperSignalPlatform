@@ -1,27 +1,27 @@
 {
   "groups": {
-    "sg_coin_notify": {
-      "service_name": "paper-signal-coin-sg",
-      "account_alias": "sg-paper-coin",
+    "sg_alpha": {
+      "service_name": "paper-signal-alpha-sg",
+      "account_alias": "sg-paper-alpha",
       "base_currency": "USD",
       "market_calendar": "XNYS",
       "starting_equity": 100000.0,
       "slippage_bps": 15.0,
       "commission_bps": 0.0,
       "fill_model": "next_open",
-      "artifact_bucket_prefix": "paper-signal/sg/coin",
+      "artifact_bucket_prefix": "paper-signal/sg/alpha",
       "telegram_chat_id": ""
     },
-    "sg_soxl_notify": {
-      "service_name": "paper-signal-soxl-sg",
-      "account_alias": "sg-paper-soxl",
+    "sg_beta": {
+      "service_name": "paper-signal-beta-sg",
+      "account_alias": "sg-paper-beta",
       "base_currency": "USD",
       "market_calendar": "XNYS",
       "starting_equity": 100000.0,
       "slippage_bps": 10.0,
       "commission_bps": 0.0,
       "fill_model": "next_open",
-      "artifact_bucket_prefix": "paper-signal/sg/soxl"
+      "artifact_bucket_prefix": "paper-signal/sg/beta"
     }
   }
 }

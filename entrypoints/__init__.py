@@ -1,1 +1,1 @@
-"""Cloud Run entrypoints for PaperSignalPlatform."""
+"""Entry-point helpers for PaperSignalPlatform."""
